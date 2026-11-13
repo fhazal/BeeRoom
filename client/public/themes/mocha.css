@@ -1,0 +1,73 @@
+/* BeeRoom layout in Catppuccin Mocha (palette MIT, catppuccin.com). Built on bee.css. */
+@import "bee.css";
+
+:root {
+	--bee-bg: #1e1e2e;
+	--bee-side: #181825;
+	--bee-panel: #313244;
+	--bee-panel2: #45475a;
+	--bee-line: #45475a;
+	--bee-text: #cdd6f4;
+	--bee-muted: #a6adc8;
+	--bee-dim: #7f849c;
+	--bee-yellow: #f9e2af;
+	--bee-tint: #f9e2af1c;
+	--bee-green: #a6e3a1;
+	--bee-red: #f38ba8;
+}
+
+#chat .msg,
+#chat .content,
+#chat .msg .content { color: #cdd6f4; }
+
+#chat .msg:not([data-type="message"]):not([data-type="action"]):not([data-type="notice"]) .content {
+	color: var(--bee-dim);
+}
+#sidebar .channel-list-item:hover { background: #ffffff0a; }
+#chat .header { background: #181825; }
+
+/* nicks: Catppuccin accents */
+.user { color: #bac2de; }
+
+.user.color-1,
+.user.color-9,
+.user.color-17,
+.user.color-25 { color: #f9e2af; }
+
+.user.color-2,
+.user.color-10,
+.user.color-18,
+.user.color-26 { color: #a6e3a1; }
+
+.user.color-3,
+.user.color-11,
+.user.color-19,
+.user.color-27 { color: #fab387; }
+
+.user.color-4,
+.user.color-12,
+.user.color-20,
+.user.color-28 { color: #89b4fa; }
+
+.user.color-5,
+.user.color-13,
+.user.color-21,
+.user.color-29 { color: #f5c2e7; }
+
+.user.color-6,
+.user.color-14,
+.user.color-22,
+.user.color-30 { color: #cba6f7; }
+
+.user.color-7,
+.user.color-15,
+.user.color-23,
+.user.color-31 { color: #f38ba8; }
+
+.user.color-8,
+.user.color-16,
+.user.color-24,
+.user.color-32 { color: #94e2d5; }
+
+#sidebar .badge.highlight,
+#form #submit { color: #1e1e2e; }

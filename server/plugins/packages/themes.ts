@@ -32,11 +32,18 @@ export default {
 	loadLocalThemes,
 };
 
+// BeeRoom: the themes offered in Settings. default.css and morning.css stay
+// on disk (bee.css builds on default.css) but are not offered.
+const beeroomThemes: Record<string, {displayName: string; themeColor: string}> = {
+	bee: {displayName: "Bee", themeColor: "#090a0c"},
+	mocha: {displayName: "Catppuccin Mocha", themeColor: "#1e1e2e"},
+};
+
 function loadLocalThemes() {
 	const builtInThemes = fs.readdirSync(Utils.getFileFromRelativeToRoot("public", "themes"));
 
 	builtInThemes
-		.filter((theme) => theme.endsWith(".css"))
+		.filter((theme) => theme.endsWith(".css") && theme.slice(0, -4) in beeroomThemes)
 		.map(makeLocalThemeObject)
 		.forEach((theme) => themes.set(theme.name, theme));
 }
@@ -65,10 +72,11 @@ function getByName(name: string) {
 
 function makeLocalThemeObject(css: string) {
 	const themeName = css.slice(0, -4);
+	const bee = beeroomThemes[themeName];
 	return {
-		displayName: themeName.charAt(0).toUpperCase() + themeName.slice(1),
+		displayName: bee?.displayName ?? themeName.charAt(0).toUpperCase() + themeName.slice(1),
 		name: themeName,
-		themeColor: null,
+		themeColor: bee?.themeColor ?? null,
 	};
 }
 
