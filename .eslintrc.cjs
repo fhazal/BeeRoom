@@ -129,6 +129,11 @@ module.exports = defineConfig({
 	},
 	overrides: [
 		{
+			// BeeRoom's installer is an ES module.
+			files: ["**/*.mjs"],
+			parserOptions: {sourceType: "module", ecmaVersion: 2022},
+		},
+		{
 			files: ["**/*.ts", "**/*.vue"],
 			parser: "@typescript-eslint/parser",
 			parserOptions: {

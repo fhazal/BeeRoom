@@ -9,3 +9,6 @@ coverage/
 dist/
 test/public/
 client/public/fonts/*.woff*
+
+# BeeRoom release bundles (scripts/bundle.sh)
+/release/
