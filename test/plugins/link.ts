@@ -1,3 +1,4 @@
+import fs from "fs";
 import path from "path";
 import {expect} from "vitest";
 import util from "../util";
@@ -447,7 +448,9 @@ Vivamus bibendum vulputate tincidunt. Sed vitae ligula felis.`;
 				expect(data.preview.type).to.equal("image");
 				expect(data.preview.link).to.equal(real_image_url);
 				expect(data.preview.thumb).to.equal(real_image_url);
-				expect(data.preview.size).to.equal(960);
+				expect(data.preview.size).to.equal(
+					fs.statSync("client/public/img/logo-grey-bg-120x120px.png").size
+				);
 				resolve();
 			});
 		});

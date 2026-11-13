@@ -15,8 +15,8 @@ module.exports = {
 	//   kept even when they are not using or logged in to the client. All joined
 	//   channels and scrollbacks are available when they come back.
 	//
-	// This value is set to `false` by default.
-	public: false,
+	// BeeRoom: `true` (guests open the link and pick a nick).
+	public: true,
 
 	// ### `host`
 	//
@@ -99,8 +99,8 @@ module.exports = {
 	// example, the value for Morning would be `morning`, and the value for
 	// Solarized would be `thelounge-theme-solarized`.
 	//
-	// This value is set to `"default"` by default.
-	theme: "default",
+	// BeeRoom ships `bee` (default) and `mocha` (Catppuccin Mocha).
+	theme: "bee",
 
 	// ### `prefetch`
 	//
@@ -216,7 +216,7 @@ module.exports = {
 	//
 	// This value is set to `"The Lounge - https://thelounge.chat"` by
 	// default.
-	leaveMessage: "The Lounge - https://thelounge.chat",
+	leaveMessage: "BeeRoom - https://beeircd.org",
 
 	// ## Default network
 
@@ -263,16 +263,16 @@ module.exports = {
 	// }
 	// ```
 	defaults: {
-		name: "Libera.Chat",
-		host: "irc.libera.chat",
-		port: 6697,
+		name: "BeeIRCd",
+		host: "127.0.0.1",
+		port: 6667,
 		password: "",
-		tls: true,
+		tls: false,
 		rejectUnauthorized: true,
-		nick: "thelounge%%",
-		username: "thelounge",
+		nick: "guest%%%%",
+		username: "beeroom",
 		realname: "",
-		join: "#thelounge",
+		join: "",
 		leaveMessage: "",
 	},
 
@@ -282,8 +282,8 @@ module.exports = {
 	// settings and will be limited to the configured network.
 	// These fields will also be hidden from the UI.
 	//
-	// This value is set to `false` by default.
-	lockNetwork: false,
+	// BeeRoom: `true` (BeeRoom is the web chat of one BeeIRCd network).
+	lockNetwork: true,
 
 	// ## User management
 

@@ -248,7 +248,7 @@ export default async function (
 					Config.values.theme
 				)}" does not exist, verify your config.`
 			);
-			Config.values.theme = "default";
+			Config.values.theme = "bee";
 		} else if (defaultTheme.themeColor) {
 			Config.values.themeColor = defaultTheme.themeColor;
 		}
@@ -315,7 +315,7 @@ export default async function (
 				});
 		}
 
-		changelog.checkForUpdates(manager);
+		// BeeRoom: no check for new The Lounge versions (BeeRoom ships its own updates).
 	});
 
 	return server;
@@ -680,7 +680,7 @@ function initializeClient(
 				client.manager.webPush.pushSingle(client, registration, {
 					type: "notification",
 					timestamp: Date.now(),
-					title: "The Lounge",
+					title: "BeeRoom",
 					body: "🚀 Push notifications have been enabled",
 				});
 			}
@@ -898,9 +898,10 @@ function getClientConfiguration(): SharedConfiguration | LockedSharedConfigurati
 		return result;
 	}
 
-	// Only send defaults that are visible on the client
+	// Only send defaults that are visible on the client (BeeRoom: the name too,
+	// for the "Connect to <network>" heading)
 	const defaults: LockedConfigNetDefaults = {
-		..._.omit(Config.values.defaults, ["host", "name", "port", "tls", "rejectUnauthorized"]),
+		..._.omit(Config.values.defaults, ["host", "port", "tls", "rejectUnauthorized"]),
 		...defaultsOverride,
 	};
 
