@@ -3,6 +3,23 @@ import os from "os";
 import Helper from "../../server/helper";
 
 describe("Helper", function () {
+	describe("#forwardedClientIp", function () {
+		it("takes the address the trusted proxy added, not one the visitor sent", function () {
+			// Apache and nginx append the real peer to whatever the visitor sent.
+			expect(Helper.forwardedClientIp("127.0.0.1", "1.2.3.4, 203.0.113.9")).to.equal(
+				"203.0.113.9"
+			);
+			expect(Helper.forwardedClientIp("127.0.0.1", "203.0.113.9")).to.equal("203.0.113.9");
+		});
+
+		it("keeps the socket address when the header is missing or not an IP", function () {
+			expect(Helper.forwardedClientIp("::ffff:127.0.0.1", undefined)).to.equal("127.0.0.1");
+			expect(Helper.forwardedClientIp("127.0.0.1", "1.2.3.4, not-an-ip")).to.equal(
+				"127.0.0.1"
+			);
+		});
+	});
+
 	describe("#expandHome", function () {
 		it("should correctly expand a Unix path", function () {
 			expect([`${os.homedir()}/tmp`, `${os.homedir()}\\tmp`]).to.include(

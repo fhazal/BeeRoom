@@ -13,6 +13,7 @@ export type Hostmask = {
 };
 
 const Helper = {
+	forwardedClientIp,
 	expandHome,
 	getVersion,
 	getVersionCacheBust,
@@ -32,6 +33,24 @@ const Helper = {
 };
 
 export default Helper;
+
+// forwardedClientIp is the visitor's IP behind a reverse proxy. BeeRoom: the
+// LAST X-Forwarded-For entry, the one our own proxy added. Apache and nginx
+// append the real peer to whatever the visitor sent, so the first entry can
+// be made up (and BeeRoom passes this IP on to the IRC server over WEBIRC).
+function forwardedClientIp(address: string, forwardedFor: string | undefined) {
+	let ip = address || "127.0.0.1";
+	const forwarded = String(forwardedFor || "")
+		.split(/\s*,\s*/)
+		.filter(Boolean);
+	const last = forwarded[forwarded.length - 1];
+
+	if (last && net.isIP(last)) {
+		ip = last;
+	}
+
+	return ip.replace(/^::ffff:/, "");
+}
 
 function ip2hex(address: string) {
 	// no ipv6 support
