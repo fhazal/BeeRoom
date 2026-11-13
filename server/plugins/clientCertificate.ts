@@ -105,7 +105,7 @@ function generate() {
 	const attrs = [
 		{
 			name: "commonName",
-			value: "The Lounge IRC Client",
+			value: "BeeRoom IRC Client",
 		},
 	];
 	cert.setSubject(attrs);

@@ -7,82 +7,22 @@
 			<h1 class="title">Help</h1>
 
 			<h2 class="help-version-title">
-				<span>About The Lounge</span>
-				<small>
-					v{{ store.state.serverConfiguration?.version }} (<router-link
-						id="view-changelog"
-						to="/changelog"
-						>release notes</router-link
-					>)
-				</small>
+				<span>About BeeRoom</span>
 			</h2>
 
 			<div class="about">
-				<VersionChecker />
-
-				<template v-if="store.state.serverConfiguration?.gitCommit">
-					<p>
-						The Lounge is running from source (<a
-							:href="`https://github.com/thelounge/thelounge/tree/${store.state.serverConfiguration?.gitCommit}`"
-							target="_blank"
-							rel="noopener"
-							>commit <code>{{ store.state.serverConfiguration?.gitCommit }}</code></a
-						>).
-					</p>
-
-					<ul>
-						<li>
-							Compare
-							<a
-								:href="`https://github.com/thelounge/thelounge/compare/${store.state.serverConfiguration?.gitCommit}...master`"
-								target="_blank"
-								rel="noopener"
-								>between
-								<code>{{ store.state.serverConfiguration?.gitCommit }}</code> and
-								<code>master</code></a
-							>
-							to see what you are missing
-						</li>
-						<li>
-							Compare
-							<a
-								:href="`https://github.com/thelounge/thelounge/compare/${store.state.serverConfiguration?.version}...${store.state.serverConfiguration?.gitCommit}`"
-								target="_blank"
-								rel="noopener"
-								>between
-								<code>{{ store.state.serverConfiguration?.version }}</code> and
-								<code>{{ store.state.serverConfiguration?.gitCommit }}</code></a
-							>
-							to see your local changes
-						</li>
-					</ul>
-				</template>
-
+				<p>
+					BeeRoom is the web chat for BeeIRCd, based on
+					<a href="https://thelounge.chat/" target="_blank" rel="noopener">The Lounge</a>
+					{{ store.state.serverConfiguration?.version }} (MIT licence).
+				</p>
 				<p>
 					<a
-						href="https://thelounge.chat/"
+						href="https://beeircd.org/"
 						target="_blank"
 						rel="noopener"
 						class="website-link"
 						>Website</a
-					>
-				</p>
-				<p>
-					<a
-						href="https://thelounge.chat/docs/"
-						target="_blank"
-						rel="noopener"
-						class="documentation-link"
-						>Documentation</a
-					>
-				</p>
-				<p>
-					<a
-						href="https://github.com/thelounge/thelounge/issues/new"
-						target="_blank"
-						rel="noopener"
-						class="report-issue-link"
-						>Report an issue…</a
 					>
 				</p>
 			</div>
@@ -865,13 +805,11 @@
 import {defineComponent, ref} from "vue";
 import {useStore} from "../../js/store";
 import SidebarToggle from "../SidebarToggle.vue";
-import VersionChecker from "../VersionChecker.vue";
 
 export default defineComponent({
 	name: "Help",
 	components: {
 		SidebarToggle,
-		VersionChecker,
 	},
 	setup() {
 		const store = useStore();
