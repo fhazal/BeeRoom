@@ -3,7 +3,7 @@
 </template>
 
 <script lang="ts">
-import {defineComponent, ref} from "vue";
+import {defineComponent, onMounted, ref} from "vue";
 
 import socket from "../../js/socket";
 import {useStore} from "../../js/store";
@@ -106,6 +106,19 @@ export default defineComponent({
 				parseOverrideParams(props.queryParams)
 			)
 		);
+
+		// BeeRoom: the Hive Panel's Chat tab opens BeeRoom with ?autoconnect
+		// and a one-time SASL key. Connect at once, and take the key out of
+		// the address so it isn't kept in the history.
+		if (props.queryParams?.autoconnect !== undefined) {
+			// Hash routing keeps the query after "#/connect": drop all of it.
+			window.history.replaceState(
+				window.history.state,
+				"",
+				window.location.pathname + "#/connect"
+			);
+			onMounted(() => handleSubmit({...defaults.value}));
+		}
 
 		return {
 			defaults,

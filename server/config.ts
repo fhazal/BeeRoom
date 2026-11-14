@@ -103,6 +103,7 @@ export type ConfigType = {
 	leaveMessage: string;
 	defaults: Defaults;
 	lockNetwork: boolean;
+	frameAncestors: string[];
 	messageStorage: string[];
 	storagePolicy: StoragePolicy;
 	useHexIp: boolean;

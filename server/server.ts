@@ -361,6 +361,15 @@ function allRequests(_req: Request, res: Response, next: NextFunction) {
 	return next();
 }
 
+// frameAncestors is the CSP list of pages that may frame BeeRoom: the
+// configured origins (plain http(s)://host[:port] only), else 'none'.
+function frameAncestors(): string {
+	const ok = (Config.values.frameAncestors || []).filter((o) =>
+		/^https?:\/\/[a-z0-9.\-[\]:]+$/i.test(String(o))
+	);
+	return ok.length ? ok.join(" ") : "'none'";
+}
+
 function addSecurityHeaders(_req: Request, res: Response, next: NextFunction) {
 	const policies = [
 		"default-src 'none'", // default to nothing
@@ -373,6 +382,8 @@ function addSecurityHeaders(_req: Request, res: Response, next: NextFunction) {
 		"manifest-src 'self'", // manifest.json
 		"font-src 'self' https:", // allow loading fonts from secure sites (e.g. google fonts)
 		"media-src 'self' https:", // self for notification sound; allow https media (audio previews)
+		// BeeRoom: only the Hive Panel may show BeeRoom in a frame (no clickjacking)
+		"frame-ancestors " + frameAncestors(),
 	];
 
 	// If prefetch is enabled, but storage is not, we have to allow mixed content

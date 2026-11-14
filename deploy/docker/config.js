@@ -24,6 +24,12 @@ config.defaults.tls = (process.env.BEEROOM_IRC_TLS || "true") === "true";
 config.defaults.rejectUnauthorized = false;
 config.defaults.join = process.env.BEEROOM_CHANNELS || "#lobby";
 
+// The Hive Panel's Chat tab may show BeeRoom: the panel's address as the
+// browser sees it (BEEROOM_PANEL in compose.yaml, spaces between several).
+config.frameAncestors = (process.env.BEEROOM_PANEL || "http://127.0.0.1:8787 http://localhost:8787")
+	.split(/\s+/)
+	.filter(Boolean);
+
 // WEBIRC: tells the IRC server each person's real IP.
 config.webirc = {[config.defaults.host]: shared("webirc")};
 

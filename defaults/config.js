@@ -285,6 +285,15 @@ module.exports = {
 	// BeeRoom: `true` (BeeRoom is the web chat of one BeeIRCd network).
 	lockNetwork: true,
 
+	// ### `frameAncestors`
+	//
+	// BeeRoom: the pages that may show BeeRoom inside them (the Chat tab of
+	// the Hive Panel). Anything else may not frame it, so no other site can
+	// lay BeeRoom under its own page. The defaults are the Hive Panel over
+	// its SSH tunnel; add the panel's address if it has a public one, like
+	// `"https://panel.example.org"`. An empty list allows no framing at all.
+	frameAncestors: ["http://127.0.0.1:8787", "http://localhost:8787"],
+
 	// ## User management
 
 	// ### `messageStorage`
