@@ -2,7 +2,9 @@
 # on the machine. Built from this repo:
 #   docker buildx build --platform linux/amd64,linux/arm64 -f deploy/docker/Dockerfile .
 # It runs next to the BeeIRCd image; see compose.yaml in the BeeIRCd repo.
-FROM node:22-alpine AS build
+# The app has no native modules, so it is built once on the build machine's
+# own platform and the same files go into every image.
+FROM --platform=$BUILDPLATFORM node:22-alpine AS build
 WORKDIR /src
 COPY . .
 RUN npx -y yarn@1.22.22 install --frozen-lockfile --non-interactive \
