@@ -55,8 +55,7 @@ program and service (`--purge`: settings and data too).
 
 On Linux with Node 22: `scripts/bundle.sh release` makes
 `beeroom-<version>.tar.gz` (the `beeroom` field in `package.json`). It is
-signed like a BeeIRCd release, from the BeeIRCd repo, with `-product beeroom`
-(see its RELEASING.md). `test/install/run.sh` tests the installer in fresh
+signed with the BeeIRCd release key (`-product beeroom`). `test/install/run.sh` tests the installer in fresh
 LXD containers (Apache, nginx, Caddy, no web server, IRC server elsewhere).
 
 ## Credits and licence

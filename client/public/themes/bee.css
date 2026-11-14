@@ -1,7 +1,7 @@
 /* BeeRoom theme for The Lounge - BeeIRCd look (black + honey yellow, zen).
    Fonts: Inter, Space Grotesk, JetBrains Mono (OFL). Icons: Lucide (ISC). */
 
-/* The "fixes" section at the end overrides earlier rules on purpose (m0 look). */
+/* The "fixes" section at the end overrides earlier rules on purpose. */
 /* stylelint-disable no-duplicate-selectors */
 @import "default.css";
 
