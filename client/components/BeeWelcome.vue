@@ -14,6 +14,8 @@
 import {computed, defineComponent, PropType, ref, watch} from "vue";
 import {ChanType} from "../../shared/types/chan";
 import {MessageType} from "../../shared/types/msg";
+import {useStore} from "../js/store";
+import {beeWelcomeKey} from "../js/helpers/beeMessage";
 import type {ClientChan, ClientNetwork} from "../js/types";
 
 const storageKey = "beeroom.welcomeSeen";
@@ -53,7 +55,14 @@ export default defineComponent({
 		channel: {type: Object as PropType<ClientChan>, required: true},
 	},
 	setup(props) {
-		const key = computed(() => `${props.network.uuid}/${props.channel.name.toLowerCase()}`);
+		const store = useStore();
+		const key = computed(() =>
+			beeWelcomeKey(
+				props.network,
+				props.channel.name,
+				!!store.state.serverConfiguration?.public
+			)
+		);
 		const isSeen = computed(() => seen.value.includes(key.value));
 
 		const show = computed(() => props.channel.type === ChanType.CHANNEL && !isSeen.value);

@@ -29,6 +29,17 @@ export const canBeeTag = (
 	!!channel &&
 	(channel.type === ChanType.CHANNEL || channel.type === ChanType.QUERY);
 
+// The welcome card remembers each channel it was dismissed in. Public mode
+// gives the network a new uuid on every visit, so there it goes by name.
+export const beeWelcomeKey = (
+	network: Pick<ClientNetwork, "uuid" | "name">,
+	channelName: string,
+	isPublic: boolean
+) => {
+	const net = isPublic ? "name:" + network.name.toLowerCase() : network.uuid;
+	return `${net}/${channelName.toLowerCase()}`;
+};
+
 const QUOTE_LENGTH = 60;
 
 // "first ~60 characters…" of a message, colours and styles removed
