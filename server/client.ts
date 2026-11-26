@@ -468,11 +468,15 @@ class Client {
 
 	input(data) {
 		const client = this;
-		// +draft/reply goes on the first line only; drop anything that is not a safe msgid
+		// +draft/reply goes on the first non-empty line (empty lines are dropped downstream);
+		// drop anything that is not a safe msgid
 		let replyTo = isValidMsgid(data.replyTo) ? data.replyTo : undefined;
 		data.text.split("\n").forEach((line) => {
 			client.inputLine({target: data.target, text: line, replyTo});
-			replyTo = undefined;
+
+			if (line.length > 0) {
+				replyTo = undefined;
+			}
 		});
 	}
 

@@ -2,6 +2,7 @@ import {expect} from "vitest";
 import msgInput from "../../../server/plugins/inputs/msg";
 import {ChanType} from "../../../shared/types/chan";
 import Chan from "../../../server/models/chan";
+import Client from "../../../server/client";
 
 describe("msg input with BeeRoom reply", function () {
 	function setup(caps: string[]) {
@@ -69,5 +70,33 @@ describe("msg input with BeeRoom reply", function () {
 		expect(echoed).to.have.length(1);
 		expect(echoed[0].event).to.equal("privmsg");
 		expect(echoed[0].data.tags).to.deep.equal({"+draft/reply": "m1"});
+	});
+});
+
+describe("Client.input reply placement", function () {
+	function run(text: string, replyTo = "m1"): Array<{text: string; replyTo?: string}> {
+		const lines: Array<{text: string; replyTo?: string}> = [];
+		const fake: any = {inputLine: (d: {text: string; replyTo?: string}) => lines.push(d)};
+		Client.prototype.input.call(fake, {target: 1, text, replyTo});
+		return lines;
+	}
+
+	it("gives the reply to the first line when it has text", function () {
+		const lines = run("a\nb");
+		expect(lines.map((l) => l.replyTo)).to.deep.equal(["m1", undefined]);
+	});
+
+	it("keeps the reply when the first line is empty", function () {
+		const sent = run("\nhello\nworld").filter((l) => l.text.length > 0);
+		expect(sent.map((l) => [l.text, l.replyTo])).to.deep.equal([
+			["hello", "m1"],
+			["world", undefined],
+		]);
+	});
+
+	it("drops the reply when the first non-empty line is a command", function () {
+		const sent = run("\n/me waves\nhello").filter((l) => l.text.length > 0);
+		expect(sent.map((l) => l.replyTo)).to.deep.equal(["m1", undefined]);
+		expect(sent[0].text).to.equal("/me waves");
 	});
 });
