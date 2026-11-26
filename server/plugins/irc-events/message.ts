@@ -7,6 +7,7 @@ import User from "../../models/user";
 import {MessageType} from "../../../shared/types/msg";
 import {ChanType} from "../../../shared/types/chan";
 import {MessageEventArgs} from "irc-framework";
+import {addReaction, getReaction, getReplyTo} from "../../../shared/beeTags";
 
 const nickRegExp = /(?:\x03[0-9]{1,2}(?:,[0-9]{1,2})?)?([\w[\]\\`^{|}-]+)/g;
 
@@ -22,10 +23,11 @@ type HandleInput = {
 	message: string;
 	group?: string;
 	msgid?: string;
+	replyTo?: string;
 };
 
 function convertForHandle(type: MessageType, data: MessageEventArgs): HandleInput {
-	return {...data, type: type, msgid: data.tags?.msgid};
+	return {...data, type: type, msgid: data.tags?.msgid, replyTo: getReplyTo(data.tags)};
 }
 
 export default <IrcEventHandler>function (irc, network) {
@@ -46,6 +48,60 @@ export default <IrcEventHandler>function (irc, network) {
 	irc.on("wallops", function (data) {
 		data.from_server = true;
 		handleMessage(convertForHandle(MessageType.WALLOPS, data));
+	});
+
+	// BeeRoom: TAGMSG with +draft/react and +draft/reply=<msgid> adds a reaction
+	// to that message, if it is still in memory. Same nick + same emoji counts once.
+	irc.on("tagmsg", function (data) {
+		const reaction = getReaction(data.tags);
+
+		if (!reaction || !data.nick || data.from_server) {
+			return;
+		}
+
+		const self = data.nick === irc.user.nick;
+
+		if (!self && network.isIgnoredUser(data)) {
+			return;
+		}
+
+		let target: string = data.target || "";
+		const parsedTarget = irc.network.extractTargetGroup(target);
+
+		if (parsedTarget) {
+			target = parsedTarget.target;
+		}
+
+		// A reaction sent to us belongs to the query with the sender
+		if (target.toLowerCase() === irc.user.nick.toLowerCase()) {
+			target = data.nick;
+		}
+
+		const chan = network.getChannel(target);
+
+		if (!chan || (chan.type !== ChanType.CHANNEL && chan.type !== ChanType.QUERY)) {
+			return;
+		}
+
+		const msg = chan.findByMsgid(reaction.msgid);
+
+		if (!msg) {
+			return;
+		}
+
+		if (!msg.reactions) {
+			msg.reactions = [];
+		}
+
+		if (!addReaction(msg.reactions, reaction.emoji, data.nick)) {
+			return;
+		}
+
+		client.emit("msg:react", {
+			chan: chan.id,
+			id: msg.id,
+			reactions: msg.reactions,
+		});
 	});
 
 	function handleMessage(data: HandleInput) {
@@ -129,6 +185,7 @@ export default <IrcEventHandler>function (irc, network) {
 			highlight: highlight,
 			users: [],
 			msgid: data.msgid,
+			replyTo: data.replyTo,
 		});
 
 		if (showInActive) {

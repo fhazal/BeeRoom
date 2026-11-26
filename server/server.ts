@@ -470,6 +470,12 @@ function initializeClient(
 		}
 	});
 
+	socket.on("msg:react", (data) => {
+		if (_.isPlainObject(data)) {
+			client.react(data);
+		}
+	});
+
 	socket.on("more", (data) => {
 		if (_.isPlainObject(data)) {
 			const history = client.more(data);

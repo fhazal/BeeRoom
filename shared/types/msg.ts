@@ -59,10 +59,20 @@ export type LinkPreview = {
 	thumbActualUrl?: string;
 };
 
+// BeeRoom: one emoji reaction on a message and the nicks that used it (each nick once)
+export type SharedReaction = {
+	emoji: string;
+	nicks: string[];
+};
+
 export type SharedMsg = {
 	from?: UserInMessage;
 	id: number;
 	msgid?: string;
+	// msgid of the message this one replies to (IRCv3 +draft/reply)
+	replyTo?: string;
+	// IRCv3 +draft/react reactions, kept in memory only
+	reactions?: SharedReaction[];
 	previews?: LinkPreview[];
 	text?: string;
 	type?: MessageType;

@@ -5,17 +5,23 @@ import Network, {NetworkWithIrcFramework} from "../../models/network";
 import {PackageInfo} from "../packages";
 import PublicClient from "../packages/publicClient";
 
+// Extra data that comes with a plain-text line (BeeRoom reply)
+export type InputOptions = {
+	replyTo?: string;
+};
+
 export type PluginInputHandler = (
 	this: Client,
 	network: NetworkWithIrcFramework,
 	chan: Channel,
 	cmd: string,
-	args: string[]
+	args: string[],
+	opts?: InputOptions
 ) => void;
 
 type Plugin = {
 	commands: string[];
-	input: (network: Network, chan: Chan, cmd: string, args: string[]) => void;
+	input: (network: Network, chan: Chan, cmd: string, args: string[], opts?: InputOptions) => void;
 	allowDisconnected?: boolean;
 };
 

@@ -65,6 +65,7 @@ import {watch, defineComponent, nextTick, onMounted, PropType, ref, onUnmounted}
 import type {ClientNetwork, ClientChan} from "../js/types";
 import {useStore} from "../js/store";
 import {ChanType} from "../../shared/types/chan";
+import {useBeeTheme} from "../js/helpers/beeTheme";
 
 const formattingHotkeys = {
 	"mod+k": "\x03",
@@ -99,6 +100,7 @@ export default defineComponent({
 	},
 	setup(props) {
 		const store = useStore();
+		const isBee = useBeeTheme();
 		const input = ref<HTMLTextAreaElement>();
 		const uploadInput = ref<HTMLInputElement>();
 		const autocompletionRef = ref<ReturnType<typeof autocompletion>>();
@@ -192,7 +194,24 @@ export default defineComponent({
 				}
 			}
 
+			// Bee themes: a plain message answers the message picked with Reply
+			const isPlain = text[0] !== "/" || text[1] === "/";
+			const replyTo = isBee.value && isPlain ? props.channel.beeReply?.msgid : undefined;
+
+			if (replyTo) {
+				props.channel.beeReply = null;
+				socket.emit("input", {target, text, replyTo});
+				return;
+			}
+
 			socket.emit("input", {target, text});
+		};
+
+		// Esc cancels a reply (Bee themes)
+		const cancelBeeReply = () => {
+			if (props.channel.beeReply) {
+				props.channel.beeReply = null;
+			}
 		};
 
 		const onUploadInputChange = () => {
@@ -237,6 +256,7 @@ export default defineComponent({
 
 		onMounted(() => {
 			eventbus.on("escapekey", blurInput);
+			eventbus.on("escapekey", cancelBeeReply);
 
 			if (store.state.settings.autocomplete) {
 				if (!input.value) {
@@ -330,6 +350,7 @@ export default defineComponent({
 
 		onUnmounted(() => {
 			eventbus.off("escapekey", blurInput);
+			eventbus.off("escapekey", cancelBeeReply);
 
 			if (autocompletionRef.value) {
 				autocompletionRef.value.destroy();

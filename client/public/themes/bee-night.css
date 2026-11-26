@@ -1255,3 +1255,236 @@ code,
 
 /* keyboard-picked person: yellow left bar, straight corners */
 #chat .userlist .user.active { box-shadow: inset 3px 0 0 var(--bee-yellow); }
+
+/* ---------- Hive Talk: reply and react (Bee only) ----------
+   Message.vue renders .bee-acts, .bee-quote and .bee-reactions only on .bee-talk lines,
+   and Chat.vue renders .bee-reply-bar only while a Bee theme is active. */
+.bee-ico {
+	display: block;
+	width: 16px;
+	height: 16px;
+	background: currentcolor;
+	mask: var(--ico) center / contain no-repeat;
+}
+
+.bee-act-reply .bee-ico {
+	--ico: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='9 17 4 12 9 7'/><path d='M20 18v-2a4 4 0 0 0-4-4H4'/></svg>");
+}
+
+.bee-act-react .bee-ico {
+	--ico: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M22 11v1a10 10 0 1 1-9-10'/><path d='M8 14s1.5 2 4 2 4-2 4-2'/><line x1='9' y1='9' x2='9.01' y2='9'/><line x1='15' y1='9' x2='15.01' y2='9'/><path d='M16 5h6'/><path d='M19 2v6'/></svg>");
+}
+
+.bee-act-more .bee-ico {
+	--ico: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><circle cx='12' cy='5' r='1'/><circle cx='12' cy='12' r='1'/><circle cx='12' cy='19' r='1'/></svg>");
+}
+
+.bee-reply-cancel .bee-ico {
+	--ico: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M18 6 6 18'/><path d='m6 6 12 12'/></svg>");
+}
+
+/* hover bar: top right of the message; touch screens open it with a tap (.open) */
+#chat .msg.bee-talk .bee-acts {
+	position: absolute;
+	right: 14px;
+	top: -10px;
+	z-index: 2;
+	display: none;
+	background: var(--bee-panel);
+	border: 1px solid var(--bee-line);
+	color: var(--bee-muted);
+}
+
+@media (hover: hover) {
+	#chat .msg.bee-talk:hover > .bee-acts { display: flex; }
+}
+
+#chat .msg.bee-talk > .bee-acts.open { display: flex; }
+
+#chat .bee-acts button,
+#chat .bee-reactions button,
+.bee-reply-bar button {
+	margin: 0;
+	border: 0;
+	border-radius: 0;
+	background: none;
+	color: inherit;
+	font: inherit;
+	cursor: pointer;
+}
+
+#chat .bee-acts .bee-act {
+	display: grid;
+	place-items: center;
+	padding: 5px 7px;
+}
+
+#chat .bee-acts .bee-act:hover,
+#chat .bee-acts .bee-act:focus-visible {
+	background: var(--bee-hover);
+	color: var(--bee-text);
+}
+
+#chat .bee-acts .bee-act.active { color: var(--bee-honey-text); }
+
+/* React popover and More menu, under the bar */
+#chat .bee-acts .bee-pop {
+	position: absolute;
+	top: calc(100% + 4px);
+	right: -1px;
+	display: flex;
+	background: var(--bee-panel);
+	border: 1px solid var(--bee-line);
+	box-shadow: 0 8px 20px var(--bee-shadow);
+}
+
+#chat .bee-acts .bee-react-pick {
+	width: 34px;
+	height: 32px;
+	padding: 0;
+	font-size: 17px;
+	line-height: 32px;
+	text-align: center;
+}
+
+#chat .bee-acts .bee-react-pick:hover,
+#chat .bee-acts .bee-react-pick:focus-visible { background: var(--bee-hover); }
+#chat .bee-acts .bee-react-pick.me { box-shadow: inset 0 0 0 1px var(--bee-yellow); }
+
+#chat .bee-acts .bee-more-menu {
+	flex-direction: column;
+	min-width: 210px;
+	padding: 4px 0;
+}
+
+#chat .bee-acts .bee-more-item {
+	padding: 7px 12px;
+	color: var(--bee-text);
+	font-size: 13px;
+	font-style: normal;
+	text-align: left;
+	white-space: nowrap;
+}
+
+#chat .bee-acts .bee-more-item:hover,
+#chat .bee-acts .bee-more-item:focus-visible {
+	background: var(--bee-hover);
+	box-shadow: inset 3px 0 0 var(--bee-yellow);
+}
+
+/* quote line of a reply, above the text */
+#chat .msg.bee-talk .bee-quote {
+	display: block;
+	margin-bottom: 2px;
+	padding-left: 8px;
+	overflow: hidden;
+	border-left: 2px solid var(--bee-line);
+	color: var(--bee-muted);
+	font-size: 12.5px;
+	font-style: normal;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	cursor: pointer;
+}
+
+#chat .msg.bee-talk .bee-quote:hover { color: var(--bee-text); }
+
+#chat .msg.bee-talk .bee-quote-nick {
+	color: var(--bee-text);
+	font-weight: 600;
+}
+#chat .msg.bee-talk .bee-quote-missing { cursor: default; }
+#chat .msg.bee-talk .bee-quote-missing:hover { color: var(--bee-muted); }
+
+/* reaction chips */
+#chat .msg.bee-talk .bee-reactions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px;
+	margin-top: 4px;
+	font-style: normal;
+}
+
+#chat .msg.bee-talk .bee-chip {
+	padding: 0 7px;
+	border: 1px solid var(--bee-line);
+	background: var(--bee-panel);
+	color: var(--bee-muted);
+	font-size: 12px;
+	line-height: 20px;
+}
+
+#chat .msg.bee-talk .bee-chip.me {
+	border-color: var(--bee-yellow);
+	color: var(--bee-text);
+}
+
+#chat .msg.bee-talk .bee-chip[aria-disabled="true"] { cursor: default; }
+#chat .msg.bee-talk .bee-chip:not([aria-disabled="true"]):hover { color: var(--bee-text); }
+
+/* the original message picked from a quote lights up for a moment */
+@keyframes bee-flash {
+	from {
+		background: var(--bee-tint);
+		box-shadow: inset 3px 0 0 var(--bee-yellow);
+	}
+
+	to {
+		background: transparent;
+		box-shadow: inset 3px 0 0 transparent;
+	}
+}
+
+#chat .msg.bee-flash { animation: bee-flash 1.6s ease-out; }
+
+@media (prefers-reduced-motion: reduce) {
+	#chat .msg.bee-flash {
+		animation: none;
+		background: var(--bee-tint);
+		box-shadow: inset 3px 0 0 var(--bee-yellow);
+	}
+}
+
+/* "Replying to" bar above the compose box: yellow left bar, straight corners */
+.bee-reply-bar {
+	flex: none;
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	margin: 0 16px 6px;
+	padding: 4px 6px 4px 12px;
+	background: var(--bee-panel);
+	border: 1px solid var(--bee-line);
+	box-shadow: inset 3px 0 0 var(--bee-yellow);
+	color: var(--bee-muted);
+	font-size: 12.5px;
+}
+
+.bee-reply-bar .bee-reply-label { flex: none; }
+
+.bee-reply-bar .bee-reply-label strong {
+	color: var(--bee-text);
+	font-weight: 600;
+}
+
+.bee-reply-bar .bee-reply-text {
+	flex: 1;
+	min-width: 0;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+.bee-reply-bar .bee-reply-cancel {
+	flex: none;
+	display: grid;
+	place-items: center;
+	padding: 4px;
+	color: var(--bee-muted);
+}
+
+.bee-reply-bar .bee-reply-cancel:hover,
+.bee-reply-bar .bee-reply-cancel:focus-visible {
+	background: var(--bee-hover);
+	color: var(--bee-text);
+}

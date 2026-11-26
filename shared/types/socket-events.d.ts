@@ -1,7 +1,7 @@
 import {SharedMention} from "./mention";
 import {ChanState, SharedChan} from "./chan";
 import {SharedNetwork, SharedServerOptions} from "./network";
-import {SharedMsg, LinkPreview} from "./msg";
+import {SharedMsg, LinkPreview, SharedReaction} from "./msg";
 import {SharedUser} from "./user";
 import {SharedChangelogData} from "./changelog";
 import {SharedConfiguration, LockedSharedConfiguration} from "./config";
@@ -55,7 +55,12 @@ interface ServerToClientEvents {
 
 	network: EventHandler<{network: SharedNetwork}>;
 	"network:options": EventHandler<{network: string; serverOptions: SharedServerOptions}>;
-	"network:status": EventHandler<{network: string; connected: boolean; secure: boolean}>;
+	"network:status": EventHandler<{
+		network: string;
+		connected: boolean;
+		secure: boolean;
+		messageTags?: boolean;
+	}>;
 	"network:info": EventHandler<{uuid: string}>;
 	"network:name": EventHandler<{uuid: string; name: string}>;
 
@@ -81,6 +86,7 @@ interface ServerToClientEvents {
 
 	"msg:preview": EventHandler<{id: number; chan: number; preview: LinkPreview}>;
 	"msg:special": EventHandler<{chan: number; data?: Record<string, any>}>;
+	"msg:react": EventHandler<{chan: number; id: number; reactions: SharedReaction[]}>;
 	msg: EventHandler<{msg: SharedMsg; chan: number; highlight?: number; unread?: number}>;
 
 	init: EventHandler<{active: number; networks: SharedNetwork[]; token?: string}>;
@@ -127,7 +133,7 @@ interface ClientToServerEvents {
 
 	names: EventHandler<{target: number}>;
 
-	input: EventHandler<{target: number; text: string}>;
+	input: EventHandler<{target: number; text: string; replyTo?: string}>;
 
 	"upload:auth": NoPayloadEventHandler;
 	"upload:ping": (token: string) => void;
@@ -161,6 +167,8 @@ interface ClientToServerEvents {
 		shown?: boolean | null;
 		link?: string;
 	}>;
+
+	"msg:react": EventHandler<{target: number; msgid: string; emoji: string}>;
 
 	"network:get": (uuid: string) => void;
 	// TODO typing

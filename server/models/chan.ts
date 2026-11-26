@@ -18,6 +18,9 @@ export type ChanConfig = {
 	type?: string;
 };
 
+// How many recent messages per channel reactions can still find
+const BEE_RECENT_MAX = 200;
+
 class Chan {
 	// TODO: don't force existence, figure out how to make TS infer it.
 	id!: number;
@@ -39,6 +42,10 @@ class Chan {
 	closed?: boolean;
 	num_users?: number;
 
+	// BeeRoom: the newest messages by msgid, so a reaction can find its message
+	// even in public mode, where messages are not kept in `messages`.
+	beeRecent = new Map<string, Msg>();
+
 	constructor(attr?: Partial<Chan>) {
 		_.defaults(this, attr, {
 			id: 0,
@@ -56,7 +63,25 @@ class Chan {
 		});
 	}
 
+	// The message with this msgid, if it is still in memory
+	findByMsgid(msgid: string): Msg | undefined {
+		const recent = this.beeRecent.get(msgid);
+
+		if (recent) {
+			return recent;
+		}
+
+		for (let i = this.messages.length - 1; i >= 0; i--) {
+			if (this.messages[i].msgid === msgid) {
+				return this.messages[i];
+			}
+		}
+
+		return undefined;
+	}
+
 	destroy() {
+		this.beeRecent.clear();
 		this.dereferencePreviews(this.messages);
 	}
 
@@ -87,6 +112,14 @@ class Chan {
 		}
 
 		client.emit("msg", {chan: chanId, msg, unread: this.unread, highlight: this.highlight});
+
+		if (msg.msgid) {
+			this.beeRecent.set(msg.msgid, msg);
+
+			if (this.beeRecent.size > BEE_RECENT_MAX) {
+				this.beeRecent.delete(this.beeRecent.keys().next().value as string);
+			}
+		}
 
 		// Never store messages in public mode as the session
 		// is completely destroyed when the page gets closed

@@ -414,7 +414,9 @@ describe("Network", function () {
 				.to.be.an("object")
 				.that.has.all.keys("channels", "status", "nick", "name", "serverOptions", "uuid");
 
-			expect(clone.status).to.be.an("object").that.has.all.keys("connected", "secure");
+			expect(clone.status)
+				.to.be.an("object")
+				.that.has.all.keys("connected", "secure", "messageTags");
 		});
 	});
 

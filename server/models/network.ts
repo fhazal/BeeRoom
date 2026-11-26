@@ -530,6 +530,7 @@ class Network {
 		const status = {
 			connected: false,
 			secure: false,
+			messageTags: false,
 		};
 
 		if (this.irc && this.irc.connection && this.irc.connection.transport) {
@@ -541,6 +542,8 @@ class Network {
 
 				status.connected = transport.isConnected();
 				status.secure = isAuthorized || isLocalhost;
+				status.messageTags =
+					status.connected && !!this.irc.network?.cap?.isEnabled("message-tags");
 			}
 		}
 

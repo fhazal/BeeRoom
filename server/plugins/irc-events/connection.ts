@@ -20,6 +20,9 @@ export default <IrcEventHandler>function (irc, network) {
 	);
 
 	irc.on("registered", function () {
+		// Caps are known now: tell the client whether message-tags is on (reply and react)
+		sendStatus();
+
 		if (network.irc.network.cap.enabled.length > 0) {
 			network.getLobby().pushMessage(
 				client,

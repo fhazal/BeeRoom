@@ -15,6 +15,7 @@
 		:data-type="message.type"
 		:data-command="message.command"
 		:data-from="message.from && message.from.nick"
+		v-on="beeGroup ? {click: onBeeTap} : {}"
 	>
 		<span
 			aria-hidden="true"
@@ -57,6 +58,19 @@
 				}}</span>
 			</span>
 			<span class="content" dir="auto">
+				<span
+					v-if="message.replyTo && replyOriginal"
+					class="bee-quote"
+					role="button"
+					tabindex="0"
+					@click.stop="jumpToReply"
+					@keydown.enter.prevent="jumpToReply"
+					><span class="bee-quote-nick">{{ replyOriginal.from?.nick }}</span
+					>: {{ replyQuoteText }}</span
+				>
+				<span v-else-if="message.replyTo" class="bee-quote bee-quote-missing"
+					>replying to an earlier message</span
+				>
 				<!-- actions: the nick is already in the group header, so only the text -->
 				<StatusmsgMarker :group="message.statusmsgGroup" />
 				<ParsedMessage :network="network" :message="message" />
@@ -67,7 +81,9 @@
 					:link="preview"
 					:channel="channel"
 				/>
+				<BeeReactions :message="message" :channel="channel" :network="network" />
 			</span>
+			<BeeMessageActions :message="message" :channel="channel" :network="network" />
 		</template>
 		<template v-else-if="isAction()">
 			<span class="from"><span class="only-copy" aria-hidden="true">***&nbsp;</span></span>
@@ -146,10 +162,13 @@ import LinkPreview from "./LinkPreview.vue";
 import ParsedMessage from "./ParsedMessage.vue";
 import MessageTypes from "./MessageTypes";
 import StatusmsgMarker from "./StatusmsgMarker.vue";
+import BeeMessageActions from "./BeeMessageActions.vue";
+import BeeReactions from "./BeeReactions.vue";
 
 import type {ClientChan, ClientMessage, ClientNetwork} from "../js/types";
 import {useStore} from "../js/store";
 import {beeHexBackground, beeInitial, beeRank} from "../js/helpers/beeTheme";
+import {beeFlashMessage, beeOpen, beeShortText, closeBeeBar} from "../js/helpers/beeMessage";
 
 MessageTypes.ParsedMessage = ParsedMessage;
 MessageTypes.LinkPreview = LinkPreview;
@@ -160,6 +179,8 @@ export default defineComponent({
 	components: {
 		...MessageTypes,
 		StatusmsgMarker,
+		BeeMessageActions,
+		BeeReactions,
 	},
 	props: {
 		message: {type: Object as PropType<ClientMessage>, required: true},
@@ -211,7 +232,52 @@ export default defineComponent({
 		const beeLetter = computed(() => beeInitial(props.message.from?.nick || "?"));
 		const beeRankTag = computed(() => beeRank(props.message.from?.mode));
 
+		// Hive Talk reply quote: the original message, when it is still loaded
+		const replyOriginal = computed(() => {
+			const replyTo = props.message.replyTo;
+
+			if (!replyTo || !props.channel) {
+				return undefined;
+			}
+
+			return props.channel.messages.find((m) => m.msgid === replyTo);
+		});
+		const replyQuoteText = computed(() => beeShortText(replyOriginal.value?.text || ""));
+
+		const jumpToReply = () => {
+			if (replyOriginal.value) {
+				beeFlashMessage(replyOriginal.value.id);
+			}
+		};
+
+		// Touch screens have no hover: a tap on the message shows or hides its bar
+		const onBeeTap = (e: MouseEvent) => {
+			if (!window.matchMedia("(hover: none)").matches) {
+				return;
+			}
+
+			const target = e.target as HTMLElement | null;
+
+			if (
+				target?.closest("a, button, input, textarea, [role='button'], .user, .bee-acts") ||
+				window.getSelection()?.toString()
+			) {
+				return;
+			}
+
+			if (beeOpen.id === props.message.id) {
+				closeBeeBar();
+			} else {
+				beeOpen.id = props.message.id;
+				beeOpen.menu = "";
+			}
+		};
+
 		return {
+			replyOriginal,
+			replyQuoteText,
+			jumpToReply,
+			onBeeTap,
 			beeHex,
 			beeLetter,
 			beeRankTag,

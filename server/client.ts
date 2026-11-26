@@ -23,6 +23,7 @@ import {StorageCleaner} from "./storageCleaner";
 import {SearchQuery, SearchResponse} from "../shared/types/storage";
 import {SharedChan, ChanType} from "../shared/types/chan";
 import {SharedNetwork} from "../shared/types/network";
+import {isValidMsgid, isAllowedReaction, hasReacted} from "../shared/beeTags";
 import {ServerToClientEvents} from "../shared/types/socket-events";
 
 const events = [
@@ -449,9 +450,11 @@ class Client {
 
 	input(data) {
 		const client = this;
+		// +draft/reply goes on the first line only; drop anything that is not a safe msgid
+		let replyTo = isValidMsgid(data.replyTo) ? data.replyTo : undefined;
 		data.text.split("\n").forEach((line) => {
-			data.text = line;
-			client.inputLine(data);
+			client.inputLine({target: data.target, text: line, replyTo});
+			replyTo = undefined;
 		});
 	}
 
@@ -468,6 +471,8 @@ class Client {
 		this.lastActiveChannel = target.chan.id;
 
 		let text: string = data.text;
+		// Reply tag only for plain text, never for slash commands
+		let replyTo: string | undefined;
 
 		// This is either a normal message or a command escaped with a leading '/'
 		if (text.charAt(0) !== "/" || text.charAt(1) === "/") {
@@ -483,6 +488,7 @@ class Client {
 			}
 
 			text = "say " + text.replace(/^\//, "");
+			replyTo = isValidMsgid(data.replyTo) ? data.replyTo : undefined;
 		} else {
 			text = text.substring(1);
 		}
@@ -511,7 +517,7 @@ class Client {
 				return;
 			}
 
-			plugin.input.apply(client, [target.network, target.chan, cmd, args]);
+			plugin.input.apply(client, [target.network, target.chan, cmd, args, {replyTo}]);
 			return;
 		}
 
@@ -539,6 +545,57 @@ class Client {
 
 		// TODO: fix
 		irc!.raw(text);
+	}
+
+	// BeeRoom: send a reaction (TAGMSG +draft/react;+draft/reply) to a message
+	react(data: {target: unknown; msgid: unknown; emoji: unknown}) {
+		if (
+			typeof data.target !== "number" ||
+			!isValidMsgid(data.msgid) ||
+			!isAllowedReaction(data.emoji)
+		) {
+			return;
+		}
+
+		const target = this.find(data.target);
+
+		if (!target) {
+			return;
+		}
+
+		const {network, chan} = target;
+		const irc = network.irc;
+
+		if (
+			!irc?.connected ||
+			(chan.type !== ChanType.CHANNEL && chan.type !== ChanType.QUERY) ||
+			!irc.network.cap.isEnabled("message-tags")
+		) {
+			return;
+		}
+
+		const msgid = data.msgid;
+		const emoji = data.emoji;
+		const msg = chan.findByMsgid(msgid);
+
+		// Your own reaction counts once and cannot be sent twice
+		if (!msg || hasReacted(msg.reactions, emoji, irc.user.nick)) {
+			return;
+		}
+
+		const tags = {"+draft/react": emoji, "+draft/reply": msgid};
+		irc.tagmsg(chan.name, tags);
+
+		// Without echo-message the server will not send it back, so add it here
+		if (!irc.network.cap.isEnabled("echo-message")) {
+			irc.emit("tagmsg", {
+				nick: irc.user.nick,
+				ident: irc.user.username,
+				hostname: irc.user.host,
+				target: chan.name,
+				tags,
+			});
+		}
 	}
 
 	compileCustomHighlights() {

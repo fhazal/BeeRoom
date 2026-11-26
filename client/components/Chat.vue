@@ -116,6 +116,7 @@
 		>
 			{{ store.state.currentUserVisibleError }}
 		</div>
+		<BeeReplyBar v-if="isBee && channel.beeReply" :channel="channel" />
 		<ChatInput :network="network" :channel="channel" />
 	</div>
 </template>
@@ -126,6 +127,7 @@ import eventbus from "../js/eventbus";
 import ParsedMessage from "./ParsedMessage.vue";
 import MessageList from "./MessageList.vue";
 import ChatInput from "./ChatInput.vue";
+import BeeReplyBar from "./BeeReplyBar.vue";
 import ChatUserList from "./ChatUserList.vue";
 import SidebarToggle from "./SidebarToggle.vue";
 import MessageSearchForm from "./MessageSearchForm.vue";
@@ -138,6 +140,7 @@ import type {ClientNetwork, ClientChan} from "../js/types";
 import {useStore} from "../js/store";
 import {SpecialChanType, ChanType} from "../../shared/types/chan";
 import parseStyle from "../js/helpers/ircmessageparser/parseStyle";
+import {useBeeTheme} from "../js/helpers/beeTheme";
 
 export default defineComponent({
 	name: "Chat",
@@ -145,6 +148,7 @@ export default defineComponent({
 		ParsedMessage,
 		MessageList,
 		ChatInput,
+		BeeReplyBar,
 		ChatUserList,
 		SidebarToggle,
 		MessageSearchForm,
@@ -157,6 +161,7 @@ export default defineComponent({
 	emits: ["channel-changed"],
 	setup(props, {emit}) {
 		const store = useStore();
+		const isBee = useBeeTheme();
 
 		const messageList = ref<typeof MessageList>();
 		const topicInput = ref<HTMLInputElement | null>(null);
@@ -273,6 +278,7 @@ export default defineComponent({
 
 		return {
 			store,
+			isBee,
 			messageList,
 			topicInput,
 			plainTopic,

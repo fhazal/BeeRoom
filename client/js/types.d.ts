@@ -17,6 +17,12 @@ type ClientUser = SharedUser;
 // which are not shared with the server
 export type ClientMessage = SharedMsg;
 
+type BeeReplyTarget = {
+	msgid: string;
+	nick: string;
+	text: string;
+};
+
 type ClientChan = Omit<SharedChan, "messages"> & {
 	moreHistoryAvailable: boolean;
 	editTopic: boolean;
@@ -31,6 +37,9 @@ type ClientChan = Omit<SharedChan, "messages"> & {
 	usersOutdated: boolean;
 
 	users: ClientUser[];
+
+	// BeeRoom: the message the compose box is replying to (Bee themes only)
+	beeReply?: BeeReplyTarget | null;
 };
 
 type InitClientChan = ClientChan & {

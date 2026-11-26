@@ -19,6 +19,7 @@ export function toClientChan(shared: SharedNetworkChan): ClientChan {
 		usersOutdated: shared.type === ChanType.CHANNEL ? true : false,
 		moreHistoryAvailable: shared.totalMessages > shared.messages.length,
 		inputHistory: history,
+		beeReply: null,
 		messages: sharedMsgToClientMsg(messages),
 	};
 	return channel;

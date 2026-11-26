@@ -3,6 +3,7 @@ import Msg from "../../models/msg";
 import Chan from "../../models/chan";
 import {MessageType} from "../../../shared/types/msg";
 import {ChanType} from "../../../shared/types/chan";
+import {isValidMsgid} from "../../../shared/beeTags";
 
 const commands = ["query", "msg", "say"];
 
@@ -16,7 +17,7 @@ function getTarget(cmd: string, args: string[], chan: Chan) {
 	}
 }
 
-const input: PluginInputHandler = function (network, chan, cmd, args) {
+const input: PluginInputHandler = function (network, chan, cmd, args, opts) {
 	let targetName = getTarget(cmd, args, chan);
 
 	if (cmd === "query") {
@@ -93,7 +94,19 @@ const input: PluginInputHandler = function (network, chan, cmd, args) {
 		return true;
 	}
 
-	network.irc.say(targetName, msg);
+	// BeeRoom reply: only plain "say" lines get here with replyTo (validated in Client.input)
+	const tags: Record<string, string> = {};
+
+	if (
+		cmd === "say" &&
+		opts?.replyTo &&
+		isValidMsgid(opts.replyTo) &&
+		network.irc.network.cap.isEnabled("message-tags")
+	) {
+		tags["+draft/reply"] = opts.replyTo;
+	}
+
+	network.irc.say(targetName, msg, tags);
 
 	// If the IRCd does not support echo-message, simulate the message
 	// being sent back to us.
@@ -116,6 +129,7 @@ const input: PluginInputHandler = function (network, chan, cmd, args) {
 				target: targetName,
 				group: targetGroup,
 				message: msg,
+				tags,
 			});
 		}
 	}

@@ -24,6 +24,8 @@ export type SharedServerOptions = {
 export type SharedNetworkStatus = {
 	connected: boolean;
 	secure: boolean;
+	// the message-tags cap is enabled (BeeRoom reply and react need it)
+	messageTags?: boolean;
 };
 
 export type SharedNetwork = {

@@ -1,10 +1,14 @@
 import _ from "lodash";
-import {MessageType, LinkPreview, UserInMessage} from "../../shared/types/msg";
+import {MessageType, LinkPreview, UserInMessage, SharedReaction} from "../../shared/types/msg";
 
 class Msg {
 	from!: UserInMessage;
 	id!: number;
 	msgid?: string;
+	// msgid of the message this one replies to (+draft/reply); saved with the message
+	replyTo?: string;
+	// +draft/react reactions; added after the message is stored, so memory only
+	reactions?: SharedReaction[];
 	previews!: LinkPreview[];
 	text!: string;
 	type!: MessageType;
