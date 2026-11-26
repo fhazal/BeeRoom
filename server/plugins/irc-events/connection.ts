@@ -67,6 +67,10 @@ export default <IrcEventHandler>function (irc, network) {
 		});
 	});
 
+	// cap-notify: the server can enable or drop capabilities (message-tags) mid-session
+	irc.on("cap ack", sendStatus);
+	irc.on("cap del", sendStatus);
+
 	irc.on("socket connected", function () {
 		if (irc.network.options.PREFIX) {
 			network.serverOptions.PREFIX.update(irc.network.options.PREFIX);
