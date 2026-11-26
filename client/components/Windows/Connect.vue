@@ -64,6 +64,17 @@ export default defineComponent({
 					continue;
 				}
 
+				// BeeRoom: with lockChannels the server joins the set room anyway,
+				// so a link's room must not show up in the form either
+				if (
+					key === "join" &&
+					store.state.serverConfiguration?.public &&
+					store.state.serverConfiguration?.lockNetwork &&
+					store.state.serverConfiguration?.lockChannels
+				) {
+					continue;
+				}
+
 				if (key === "join") {
 					value = value
 						.split(",")
