@@ -1,0 +1,50 @@
+/* BeeRoom "Bee Day": light tokens for the Bee theme.
+   Used by bee.css when the device prefers light, and always by bee-day.css.
+   :root:root beats the dark :root block in bee.css even though this file is
+   imported before it. Yellow stays a fill/bar colour; yellow TEXT uses the
+   darker honey (--bee-honey-text) so it reads on paper (5.6:1). */
+:root:root {
+	color-scheme: light;
+	--bee-bg: #faf8f2;
+	--bee-side: #f1eee5;
+	--bee-panel: #fff;
+	--bee-panel2: #f6f3ea;
+	--bee-line: #e2ddd0;
+	--bee-text: #1b1a17;
+	--bee-muted: #5b5950;
+	--bee-dim: #6b685f;
+	--bee-yellow: #f2c94c;
+	--bee-honey-text: #8a5a00;
+	--bee-on-honey: #fff;
+	--bee-tint: #f2c94c38;
+	--bee-hover: #0000000a;
+	--bee-msg: #2a2823;
+	--bee-shadow: #1b1a1726;
+	--bee-scroll: #cfc9b8;
+	--bee-green: #2d7a3e;
+	--bee-red: #b0372a;
+	--bee-logo-light: inline-block;
+	--bee-logo-dark: none;
+	--bee-nick: #3a372f;
+	--bee-n1: #8a5a00;
+	--bee-n2: #2d7a3e;
+	--bee-n3: #a3480f;
+	--bee-n4: #2f62a8;
+	--bee-n5: #a3377f;
+	--bee-n6: #6a46b0;
+	--bee-n7: #b0372a;
+	--bee-n8: #1a6f69;
+	--overlay-bg-color: #1b1a1780;
+}
+
+/* Light-only fixes for text colours that style.css hardcodes for dark backgrounds */
+:root:root {
+	--date-marker-color: var(--bee-dim);
+	--unread-marker-color: var(--bee-honey-text);
+}
+
+#chat .msg[data-type="action"] .from,
+#chat .msg[data-type="action"] .content,
+#chat .msg[data-type="action"] .user {
+	color: var(--bee-honey-text);
+}

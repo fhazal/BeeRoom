@@ -35,7 +35,9 @@ export default {
 // BeeRoom: the themes offered in Settings. default.css and morning.css stay
 // on disk (bee.css builds on default.css) but are not offered.
 const beeroomThemes: Record<string, {displayName: string; themeColor: string}> = {
-	bee: {displayName: "Bee", themeColor: "#090a0c"},
+	bee: {displayName: "Bee (follows device)", themeColor: "#090a0c"},
+	"bee-day": {displayName: "Bee Day", themeColor: "#faf8f2"},
+	"bee-night": {displayName: "Bee Night", themeColor: "#090a0c"},
 	mocha: {displayName: "Catppuccin Mocha", themeColor: "#1e1e2e"},
 };
 
