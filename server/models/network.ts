@@ -266,6 +266,14 @@ class Network {
 			this.port = Config.values.defaults.port;
 			this.tls = Config.values.defaults.tls;
 			this.rejectUnauthorized = Config.values.defaults.rejectUnauthorized;
+
+			// A locked network must not let users pick their own SOCKS proxy,
+			// or they could make this server open connections to any host.
+			this.proxyEnabled = false;
+			this.proxyHost = "";
+			this.proxyPort = 1080;
+			this.proxyUsername = "";
+			this.proxyPassword = "";
 		}
 
 		if (this.host.length === 0) {
@@ -327,7 +335,7 @@ class Network {
 		this.irc.options.webirc = this.createWebIrc(client);
 		this.irc.options.client_certificate = null;
 
-		if (this.proxyEnabled) {
+		if (this.proxyEnabled && !Config.values.lockNetwork) {
 			this.irc.options.socks = {
 				host: this.proxyHost,
 				port: this.proxyPort,

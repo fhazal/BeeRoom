@@ -183,6 +183,20 @@ describe("Network", function () {
 			expect(network2.validate({} as any)).to.be.true;
 			expect(network2.host).to.equal("irc.example.com");
 
+			// A locked network ignores a proxy sent by the user
+			const network3 = new Network({
+				proxyEnabled: true,
+				proxyHost: "10.0.0.5",
+				proxyPort: 22,
+				proxyUsername: "u",
+				proxyPassword: "p",
+			});
+			expect(network3.validate({} as any)).to.be.true;
+			expect(network3.proxyEnabled).to.be.false;
+			expect(network3.proxyHost).to.equal("");
+			expect(network3.proxyUsername).to.equal("");
+			expect(network3.proxyPassword).to.equal("");
+
 			Config.values.lockNetwork = false;
 		});
 
