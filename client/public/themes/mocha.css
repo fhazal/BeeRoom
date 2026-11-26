@@ -1,5 +1,6 @@
-/* BeeRoom layout in Catppuccin Mocha (palette MIT, catppuccin.com). Built on bee.css. */
-@import "bee.css";
+/* BeeRoom layout in Catppuccin Mocha (palette MIT, catppuccin.com). Built on bee-night.css
+   (not bee.css: its light half would override Mocha's colours on light-mode devices). */
+@import "bee-night.css";
 
 :root {
 	--bee-bg: #1e1e2e;
