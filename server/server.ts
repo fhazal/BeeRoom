@@ -465,7 +465,9 @@ function initializeClient(
 	});
 
 	socket.on("input", (data) => {
-		if (_.isPlainObject(data)) {
+		// BeeRoom: text must be a string, or data.text.split throws and the
+		// whole server stops (one guest could disconnect everybody)
+		if (_.isPlainObject(data) && typeof data.text === "string") {
 			client.input(data);
 		}
 	});
