@@ -91,7 +91,7 @@
 </template>
 
 <script lang="ts">
-import {filter as fuzzyFilter} from "fuzzy";
+import {fuzzyFilterNicks, toSafeHighlight} from "../js/helpers/userSearchHighlight";
 import {computed, defineComponent, nextTick, PropType, ref} from "vue";
 import type {UserInMessage} from "../../shared/types/msg";
 import type {ClientChan, ClientUser} from "../js/types";
@@ -130,11 +130,7 @@ export default defineComponent({
 				return;
 			}
 
-			return fuzzyFilter(userSearchInput.value, props.channel.users, {
-				pre: "<b>",
-				post: "</b>",
-				extract: (u) => u.nick,
-			});
+			return fuzzyFilterNicks(userSearchInput.value, props.channel.users);
 		});
 
 		const groupedUsers = computed(() => {
@@ -150,10 +146,8 @@ export default defineComponent({
 						groups[mode] = [];
 					}
 
-					// Prepend user mode to search result
-					user.string = mode + user.string;
-
-					groups[mode].push(user);
+					// Prepend user mode to search result (escaped; copy so a re-run never escapes twice)
+					groups[mode].push({...user, string: toSafeHighlight(user.string, mode)});
 				}
 			} else {
 				for (const user of props.channel.users) {
