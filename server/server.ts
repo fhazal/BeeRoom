@@ -886,6 +886,8 @@ function getClientConfiguration(): SharedConfiguration | LockedSharedConfigurati
 		themes: themes.getAll(),
 		defaultTheme: Config.values.theme,
 		public: Config.values.public,
+		lockChannels: !!Config.values.lockChannels,
+		beeWelcome: Config.values.beeWelcome ?? null,
 		useHexIp: Config.values.useHexIp,
 		prefetch: Config.values.prefetch,
 		fileUploadMaxFileSize: Uploader ? Uploader.getMaxFileSize() : undefined, // TODO can't be undefined?

@@ -18,6 +18,13 @@
 					</template>
 				</template>
 			</h1>
+			<div v-if="isBeeWelcome && config?.beeWelcome" class="bee-welcome-card">
+				<div class="bee-welcome-title">{{ config.beeWelcome.title }}</div>
+				<div class="bee-welcome-text">{{ config.beeWelcome.text }}</div>
+				<div v-if="config.beeWelcome.rules" class="bee-welcome-rules">
+					{{ config.beeWelcome.rules }}
+				</div>
+			</div>
 			<template v-if="!config?.lockNetwork">
 				<h2>Network settings</h2>
 				<div class="connect-row">
@@ -206,9 +213,9 @@
 				</div>
 			</template>
 
-			<h2>User preferences</h2>
+			<h2 v-if="!isBeeWelcome">User preferences</h2>
 			<div class="connect-row">
-				<label for="connect:nick">Nick</label>
+				<label for="connect:nick">{{ isBeeWelcome ? "Pick a nick" : "Nick" }}</label>
 				<input
 					id="connect:nick"
 					v-model="defaults.nick"
@@ -276,6 +283,32 @@ the server tab on new connection"
 						name="commands"
 						@input="resizeCommandsInput"
 					/>
+				</div>
+			</template>
+			<template v-else-if="!defaults.uuid && isLockedRoom">
+				<div class="connect-row">
+					<label>Room</label>
+					<div class="input-wrap">
+						<div class="bee-room-locked" title="Fixed room">
+							<span>{{ defaults.join }} on {{ defaults.name }}</span>
+							<svg
+								class="bee-room-lock"
+								viewBox="0 0 24 24"
+								width="14"
+								height="14"
+								fill="none"
+								stroke="currentColor"
+								stroke-width="2"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								aria-label="Locked"
+								role="img"
+							>
+								<rect x="4" y="11" width="16" height="10" />
+								<path d="M8 11V7a4 4 0 0 1 8 0v4" />
+							</svg>
+						</div>
+					</div>
 				</div>
 			</template>
 			<template v-else-if="!defaults.uuid">
@@ -402,6 +435,7 @@ the server tab on new connection"
 			<div>
 				<button type="submit" class="btn" :disabled="disabled ? true : false">
 					<template v-if="defaults.uuid">Save network</template>
+					<template v-else-if="isBeeWelcome">Join the chat</template>
 					<template v-else>Connect</template>
 				</button>
 			</div>
@@ -410,6 +444,61 @@ the server tab on new connection"
 </template>
 
 <style>
+#connect .bee-welcome-card {
+	margin: 0 0 20px;
+	padding: 12px 14px;
+	border: 0;
+	border-radius: 0;
+	border-left: 3px solid var(--bee-yellow, #f2c94c);
+	background: var(--bee-tint, rgba(242, 201, 76, 0.1));
+	color: var(--bee-text, inherit);
+	display: grid;
+	gap: 6px;
+}
+
+#connect .bee-welcome-title {
+	font-size: 16px;
+	font-weight: 700;
+}
+
+#connect .bee-welcome-text {
+	font-size: 14px;
+	line-height: 1.45;
+}
+
+#connect .bee-welcome-rules {
+	font-size: 12px;
+	color: var(--bee-dim, var(--body-color-muted, inherit));
+	opacity: 0.9;
+}
+
+#connect .bee-room-locked {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px;
+	padding: 8px 10px;
+	border: 1px solid var(--bee-line, rgba(128, 128, 128, 0.4));
+	border-radius: 0;
+	background: var(--bee-panel, transparent);
+	color: var(--bee-muted, inherit);
+	overflow-wrap: anywhere;
+}
+
+#connect .bee-room-lock {
+	flex: none;
+	color: var(--bee-yellow, #f2c94c);
+}
+
+@media (max-width: 768px) {
+	#connect .bee-welcome-card,
+	#connect .bee-room-locked {
+		width: 100%;
+		max-width: 100%;
+		box-sizing: border-box;
+	}
+}
+
 #connect .connect-auth {
 	display: block;
 	margin-bottom: 10px;
@@ -468,9 +557,9 @@ export default defineComponent({
 	setup(props) {
 		const store = useStore();
 		const config = ref(store.state.serverConfiguration);
-		const isLockedGuest = computed(
-			() => !!config.value?.lockNetwork && !!config.value?.public
-		);
+		const isLockedGuest = computed(() => !!config.value?.lockNetwork && !!config.value?.public);
+		const isBeeWelcome = computed(() => isLockedGuest.value && !!config.value?.beeWelcome);
+		const isLockedRoom = computed(() => isLockedGuest.value && !!config.value?.lockChannels);
 		const previousUsername = ref(props.defaults?.username);
 		const displayPasswordField = ref(false);
 
@@ -562,6 +651,8 @@ export default defineComponent({
 			store,
 			config,
 			isLockedGuest,
+			isBeeWelcome,
+			isLockedRoom,
 			displayPasswordField,
 			publicPassword,
 			commandsInput,

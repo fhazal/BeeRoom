@@ -285,6 +285,26 @@ module.exports = {
 	// BeeRoom: `true` (BeeRoom is the web chat of one BeeIRCd network).
 	lockNetwork: true,
 
+	// ### `lockChannels`
+	//
+	// BeeRoom: when `true` on a public, `lockNetwork` server, the connect screen
+	// shows the default `join` room as a read-only row, and the server forces
+	// new connections to join only that room.
+	lockChannels: false,
+
+	// ### `beeWelcome`
+	//
+	// BeeRoom: on a public, `lockNetwork` server, show a welcome card above the
+	// connect form (and a simpler "Pick a nick" / "Join the chat" form).
+	// `null` keeps the normal connect screen. Example:
+	//
+	// beeWelcome: {
+	//     title: "Welcome to #beeircd",
+	//     text: "The BeeIRCd help room. Ask about installing or running BeeIRCd.",
+	//     rules: "Be kind - no spam - logs are not public",
+	// },
+	beeWelcome: null,
+
 	// ### `frameAncestors`
 	//
 	// BeeRoom: the pages that may show BeeRoom inside them (the Chat tab of

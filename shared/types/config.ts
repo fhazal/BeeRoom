@@ -3,7 +3,14 @@ export type ConfigTheme = {
 	name: string;
 	themeColor: string | null;
 };
+export type BeeWelcome = {
+	title: string;
+	text: string;
+	rules: string;
+};
 type SharedConfigurationBase = {
+	lockChannels: boolean;
+	beeWelcome: BeeWelcome | null;
 	public: boolean;
 	useHexIp: boolean;
 	prefetch: boolean;

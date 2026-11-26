@@ -339,8 +339,26 @@ class Client {
 		});
 	}
 
+	// BeeRoom: on a public, network-locked server with `lockChannels`, the connect
+	// form may only join the configured default room. Overrides whatever a
+	// crafted socket message sent.
+	applyChannelLock(args: Record<string, any>): Record<string, any> {
+		if (!Config.values.public || !Config.values.lockNetwork || !Config.values.lockChannels) {
+			return args;
+		}
+
+		const locked: Record<string, any> = {...args, join: Config.values.defaults.join};
+		delete locked.channels;
+
+		return locked;
+	}
+
 	connectToNetwork(args: Record<string, any>, isStartup = false) {
 		const client = this;
+
+		if (!isStartup) {
+			args = this.applyChannelLock(args);
+		}
 
 		// Get channel id for lobby before creating other channels for nicer ids
 		const lobbyChannelId = client.idChan++;

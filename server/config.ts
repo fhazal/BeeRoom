@@ -10,6 +10,7 @@ import log from "./log";
 import Helper from "./helper";
 import Utils from "./command-line/utils";
 import Network from "./models/network";
+import type {BeeWelcome} from "../shared/types/config";
 
 // TODO: Type this
 export type WebIRC = {
@@ -103,6 +104,8 @@ export type ConfigType = {
 	leaveMessage: string;
 	defaults: Defaults;
 	lockNetwork: boolean;
+	lockChannels: boolean;
+	beeWelcome: BeeWelcome | null;
 	frameAncestors: string[];
 	messageStorage: string[];
 	storagePolicy: StoragePolicy;
