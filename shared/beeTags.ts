@@ -36,7 +36,7 @@ export function isValidIncomingReaction(value: unknown): value is string {
 
 	// Reject bidi controls and other invisible format marks (Cf). ZWJ and the tag
 	// characters used in flag sequences are allowed; variation selectors are not Cf.
-	return !/\p{Cf}/u.test(value.replace(/[‍\u{E0020}-\u{E007F}]/gu, ""));
+	return !/\p{Cf}/u.test(value.replace(/[\u200D\u{E0020}-\u{E007F}]/gu, ""));
 }
 
 type Tags = Record<string, string | undefined> | undefined;
