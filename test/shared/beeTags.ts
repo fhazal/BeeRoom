@@ -86,6 +86,17 @@ describe("beeTags", function () {
 			expect(isValidIncomingReaction("x".repeat(33))).to.equal(false);
 		});
 
+		it("rejects bidi controls and invisible format marks but keeps emoji sequences", function () {
+			for (const bad of ["‎", "‏", "‮", "⁦", "⁩", "؜", "​", "⁠", "﻿", "🐝‮", "‏🐝"]) {
+				expect(isValidIncomingReaction(bad), JSON.stringify(bad)).to.equal(false);
+			}
+
+			expect(isValidIncomingReaction("👨‍👩‍👧")).to.equal(true);
+			expect(isValidIncomingReaction("❤️")).to.equal(true);
+			expect(isValidIncomingReaction("🏴\u{E0067}\u{E0062}\u{E007F}")).to.equal(true);
+			expect(getReaction({"+draft/react": "🐝‮", "+draft/reply": "m1"})).to.equal(undefined);
+		});
+
 		it("reads a reaction from TAGMSG tags", function () {
 			expect(getReaction({"+draft/react": "🐝", "+draft/reply": "m1"})).to.deep.equal({
 				emoji: "🐝",
