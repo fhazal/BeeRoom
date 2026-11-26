@@ -25,7 +25,22 @@ const versions: SharedChangelogData = {
 	packages: undefined,
 };
 
-async function fetch() {
+// BeeRoom: one request at a time, and wait a while after a failure, so guests
+// asking again and again can't make the server call GitHub each time
+const RETRY_AFTER_FAILURE = 5 * 60 * 1000;
+let inFlight: Promise<SharedChangelogData> | null = null;
+
+function fetch() {
+	if (!inFlight) {
+		inFlight = fetchOnce().finally(() => {
+			inFlight = null;
+		});
+	}
+
+	return inFlight;
+}
+
+async function fetchOnce() {
 	const time = Date.now();
 
 	// Serving information from cache
@@ -43,6 +58,7 @@ async function fetch() {
 		});
 
 		if (response.statusCode !== 200) {
+			versions.expiresAt = time + RETRY_AFTER_FAILURE;
 			return versions;
 		}
 
@@ -53,6 +69,7 @@ async function fetch() {
 	} catch (error) {
 		// eslint-disable-next-line @typescript-eslint/restrict-template-expressions
 		log.error(`Failed to fetch changelog: ${error}`);
+		versions.expiresAt = time + RETRY_AFTER_FAILURE;
 	}
 
 	return versions;
