@@ -25,6 +25,7 @@
 
 :root {
 	color-scheme: dark;
+
 	--bee-bg: #090a0c;
 	--bee-side: #0d0e10;
 	--bee-panel: #121316;
@@ -863,24 +864,28 @@ code,
 
 #form #upload::before {
 	--ico: var(--i-paperclip);
+
 	width: 18px;
 	height: 18px;
 }
 
 #help .website-link::before {
 	--ico: var(--i-globe);
+
 	width: 1.35em;
 	margin-right: 5px;
 }
 
 #help .documentation-link::before {
 	--ico: var(--i-cap);
+
 	width: 1.35em;
 	margin-right: 5px;
 }
 
 #help .report-issue-link::before {
 	--ico: var(--i-bug);
+
 	width: 1.35em;
 	margin-right: 5px;
 }
@@ -888,11 +893,13 @@ code,
 #chat .msg[data-type="away"] .from::before,
 #chat .msg[data-type="back"] .from::before {
 	--ico: var(--i-clock);
+
 	color: var(--bee-dim);
 }
 
 #chat .msg[data-type="invite"] .from::before {
 	--ico: var(--i-mail);
+
 	color: var(--bee-green);
 }
 
@@ -901,33 +908,39 @@ code,
 #chat .msg[data-type="nick"] .from::before,
 #chat .msg[data-type="chghost"] .from::before {
 	--ico: var(--i-user);
+
 	color: var(--bee-green);
 }
 
 #chat .msg[data-type="logout"] .from::before {
 	--ico: var(--i-user);
+
 	color: var(--bee-red);
 }
 
 #chat .msg[data-type="part"] .from::before,
 #chat .msg[data-type="quit"] .from::before {
 	--ico: var(--i-log-out);
+
 	color: var(--bee-red);
 	transform: none;
 }
 
 #chat .msg[data-type="join"] .from::before {
 	--ico: var(--i-log-in);
+
 	color: var(--bee-green);
 }
 
 #chat .msg[data-type="kick"] .from::before {
 	--ico: var(--i-ban);
+
 	color: var(--bee-red);
 }
 
 #chat .msg[data-type="topic"] .from::before {
 	--ico: var(--i-megaphone);
+
 	color: var(--bee-green);
 }
 
@@ -935,6 +948,7 @@ code,
 #chat .msg[data-type="mode_user"] .from::before,
 #chat .msg[data-type="mode"] .from::before {
 	--ico: var(--i-info);
+
 	color: var(--bee-green);
 }
 
@@ -961,6 +975,7 @@ code,
 
 #chat .msg.self[data-type="raw"] .from::before {
 	--ico: var(--i-arrow-left-circle);
+
 	color: var(--bee-green);
 }
 
@@ -970,6 +985,7 @@ code,
 
 #chat .msg[data-type="plugin"] .from::before {
 	--ico: var(--i-plug);
+
 	transform: none;
 	padding: 0;
 }
@@ -977,6 +993,7 @@ code,
 #chat .msg-statusmsg span::before,
 #chat .msg-shown-in-active span::before {
 	--ico: var(--i-eye);
+
 	font-size: 10px;
 }
 
@@ -987,6 +1004,7 @@ code,
 
 #chat .count::before {
 	--ico: var(--i-search);
+
 	color: var(--bee-dim);
 	width: 14px;
 	height: 14px;
@@ -1018,6 +1036,7 @@ code,
 
 #sidebar .network .collapse-network-icon::before {
 	--ico: var(--i-chev-d);
+
 	color: var(--bee-dim);
 }
 

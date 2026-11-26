@@ -5,6 +5,7 @@
    darker honey (--bee-honey-text) so it reads on paper (5.6:1). */
 :root:root {
 	color-scheme: light;
+
 	--bee-bg: #faf8f2;
 	--bee-side: #f1eee5;
 	--bee-panel: #fff;
@@ -35,10 +36,8 @@
 	--bee-n7: #b0372a;
 	--bee-n8: #1a6f69;
 	--overlay-bg-color: #1b1a1780;
-}
 
-/* Light-only fixes for text colours that style.css hardcodes for dark backgrounds */
-:root:root {
+	/* light-only fixes for text colours that style.css hardcodes for dark */
 	--date-marker-color: var(--bee-dim);
 	--unread-marker-color: var(--bee-honey-text);
 }
