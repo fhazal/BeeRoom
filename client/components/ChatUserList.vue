@@ -29,18 +29,52 @@
 				v-for="(users, mode) in groupedUsers"
 				:key="mode"
 				:class="['user-mode', getModeClass(String(mode))]"
+				:data-count="users.length"
 			>
 				<template v-if="userSearchInput.length > 0">
 					<!-- eslint-disable vue/no-v-text-v-html-on-component -->
+					<template v-if="isBee">
+						<Username
+							v-for="user in users"
+							:key="user.original.nick + '-search'"
+							:on-hover="hoverUser"
+							:active="user.original === activeUser"
+							:user="user.original"
+							><span
+								class="bee-hex"
+								aria-hidden="true"
+								:style="{background: hexOf(user.original.nick)}"
+								>{{ initialOf(user.original.nick) }}</span
+							><span v-html="user.string"
+						/></Username>
+					</template>
+					<template v-else>
+						<Username
+							v-for="user in users"
+							:key="user.original.nick + '-search'"
+							:on-hover="hoverUser"
+							:active="user.original === activeUser"
+							:user="user.original"
+							v-html="user.string"
+						/>
+					</template>
+					<!-- eslint-enable -->
+				</template>
+				<template v-else-if="isBee">
+					<!-- Hive Talk: hex avatar, no mode symbol (the heading names the rank) -->
 					<Username
 						v-for="user in users"
-						:key="user.original.nick + '-search'"
+						:key="user.nick"
 						:on-hover="hoverUser"
-						:active="user.original === activeUser"
-						:user="user.original"
-						v-html="user.string"
-					/>
-					<!-- eslint-enable -->
+						:active="user === activeUser"
+						:user="user"
+						><span
+							class="bee-hex"
+							aria-hidden="true"
+							:style="{background: hexOf(user.nick)}"
+							>{{ initialOf(user.nick) }}</span
+						>{{ user.nick }}</Username
+					>
 				</template>
 				<template v-else>
 					<Username
@@ -62,6 +96,8 @@ import {computed, defineComponent, nextTick, PropType, ref} from "vue";
 import type {UserInMessage} from "../../shared/types/msg";
 import type {ClientChan, ClientUser} from "../js/types";
 import Username from "./Username.vue";
+import {useStore} from "../js/store";
+import {beeHexBackground, beeInitial, useBeeTheme} from "../js/helpers/beeTheme";
 
 const modes = {
 	"~": "owner",
@@ -82,6 +118,10 @@ export default defineComponent({
 		channel: {type: Object as PropType<ClientChan>, required: true},
 	},
 	setup(props) {
+		const store = useStore();
+		const isBee = useBeeTheme();
+		const hexOf = (nick: string) => beeHexBackground(nick, store.state.settings.coloredNicks);
+		const initialOf = beeInitial;
 		const userSearchInput = ref("");
 		const activeUser = ref<UserInMessage | null>();
 		const userlist = ref<HTMLDivElement>();
@@ -242,6 +282,9 @@ export default defineComponent({
 			userSearchInput,
 			activeUser,
 			userlist,
+			isBee,
+			hexOf,
+			initialOf,
 
 			setUserSearchInput,
 			getModeClass,

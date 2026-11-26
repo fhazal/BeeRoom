@@ -11,6 +11,7 @@
 				<span v-else>Show older messages</span>
 			</button>
 		</div>
+		<BeeWelcome v-if="isBee" :network="network" :channel="channel" />
 		<div
 			class="messages"
 			role="log"
@@ -49,6 +50,7 @@
 					:message="message"
 					:keep-scroll-position="keepScrollPosition"
 					:is-previous-source="isPreviousSource(message, id)"
+					:bee-group="beeGroup(message, id)"
 					:focused="message.id === focused"
 					@toggle-link-preview="onLinkPreviewToggle"
 				/>
@@ -67,6 +69,8 @@ import socket from "../js/socket";
 import Message from "./Message.vue";
 import MessageCondensed from "./MessageCondensed.vue";
 import DateMarker from "./DateMarker.vue";
+import BeeWelcome from "./BeeWelcome.vue";
+import {useBeeTheme, BEE_GROUP_MS} from "../js/helpers/beeTheme";
 import {
 	computed,
 	defineComponent,
@@ -98,6 +102,7 @@ export default defineComponent({
 		Message,
 		MessageCondensed,
 		DateMarker,
+		BeeWelcome,
 	},
 	props: {
 		network: {type: Object as PropType<ClientNetwork>, required: true},
@@ -283,6 +288,41 @@ export default defineComponent({
 			);
 		};
 
+		const isBee = useBeeTheme();
+
+		// Hive Talk (Bee themes only): "first" starts a group (hex avatar + nick),
+		// "cont" stacks under it. Only messages and actions group; anything else,
+		// a date marker, the unread marker or a 5 minute gap starts a new group.
+		const isTalk = (m?: {type?: string}) =>
+			!!m && (m.type === MessageType.MESSAGE || m.type === MessageType.ACTION);
+
+		const beeGroup = (message: ClientMessage, id: number) => {
+			if (
+				!isBee.value ||
+				!isTalk(message) ||
+				!message.from?.nick ||
+				(props.channel.type !== ChanType.CHANNEL && props.channel.type !== ChanType.QUERY)
+			) {
+				return "";
+			}
+
+			const prev = condensedMessages.value[id - 1] as ClientMessage | undefined;
+
+			if (
+				!prev ||
+				!isTalk(prev) ||
+				prev.from?.nick !== message.from.nick ||
+				!!prev.showInActive !== !!message.showInActive ||
+				shouldDisplayDateMarker(message, id) ||
+				(message.id > props.channel.firstUnread && prev.id <= props.channel.firstUnread)
+			) {
+				return "first";
+			}
+
+			const gap = new Date(message.time).getTime() - new Date(prev.time).getTime();
+			return gap >= 0 && gap <= BEE_GROUP_MS ? "cont" : "first";
+		};
+
 		const onCopy = () => {
 			if (chat.value) {
 				clipboard(chat.value);
@@ -432,6 +472,8 @@ export default defineComponent({
 			shouldDisplayUnreadMarker,
 			keepScrollPosition,
 			isPreviousSource,
+			isBee,
+			beeGroup,
 			jumpToBottom,
 			onLinkPreviewToggle,
 		};

@@ -58,6 +58,17 @@
 	--bee-n6: #b8b0e8;
 	--bee-n7: #f0a49a;
 	--bee-n8: #a9d6c9;
+
+	/* hex avatars: the bright set in both Bee Night and Bee Day, black letter */
+	--bee-hex1: #ffb347;
+	--bee-hex2: #8fd19a;
+	--bee-hex3: #e6a87c;
+	--bee-hex4: #9fc3e8;
+	--bee-hex5: #d9a3c8;
+	--bee-hex6: #b8b0e8;
+	--bee-hex7: #f0a49a;
+	--bee-hex8: #a9d6c9;
+	--bee-on-hex: #000;
 	--body-color: var(--bee-text);
 	--body-color-muted: var(--bee-muted);
 	--body-bg-color: var(--bee-bg);
@@ -437,9 +448,6 @@ a,
 
 #chat .userlist .user.active,
 #chat .userlist .user:hover { background: var(--bee-tint); }
-
-#chat .userlist .user-mode.op .user::first-letter,
-#chat .userlist .user-mode.voice .user::first-letter { color: var(--bee-honey-text); }
 
 /* ---------- Composer ---------- */
 #form {
@@ -1073,3 +1081,177 @@ code,
 	background-color: var(--bee-hover);
 	color: var(--bee-honey-text);
 }
+
+/* ---------- Hive Talk: grouped messages, hex avatars, rank tags (Bee only) ----------
+   Message.vue / MessageList.vue add .bee-talk, .bee-first, .bee-cont and .bee-hex only
+   while a Bee theme is active, so the classic themes never see this markup. Every line
+   shares a 52px gutter: the hex avatar sits in it, other lines show their time there on hover. */
+.bee-hex {
+	width: 28px;
+	height: 31px;
+	flex: none;
+	display: inline-grid;
+	place-items: center;
+	background: var(--bee-yellow);
+	color: var(--bee-on-hex);
+	font: 700 12px/1 "Space Grotesk", Inter, sans-serif;
+	clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
+	user-select: none;
+}
+
+#chat .msg.bee-talk {
+	display: grid;
+	grid-template-columns: 28px auto 1fr;
+	column-gap: 10px;
+	align-items: baseline;
+	padding: 1px 14px;
+}
+
+#chat .msg.bee-talk.bee-first { padding-top: 7px; }
+#chat .msg.bee-talk:hover { background: var(--bee-hover); }
+#chat .msg.bee-talk.highlight:hover { background: var(--bee-tint); }
+
+#chat .msg.bee-talk .bee-hex {
+	grid-column: 1;
+	grid-row: 1 / span 2;
+	align-self: start;
+	margin-top: 2px;
+}
+
+#chat .msg.bee-talk .from {
+	grid-column: 2;
+	grid-row: 1;
+	display: flex;
+	align-items: baseline;
+	gap: 0;
+	width: auto;
+	padding: 0;
+	overflow: visible;
+	text-align: left;
+	mask-image: none;
+}
+
+#chat .msg.bee-talk[data-type] .from::before { display: none !important; }
+#chat .msg.bee-talk[data-type="action"] .content { font-style: italic; }
+
+#chat .msg.bee-talk .bee-rank {
+	margin-left: 8px;
+	color: var(--bee-honey-text);
+	border: 1px solid var(--bee-line);
+	padding: 0 4px;
+	font: 600 10px/1.5 "JetBrains Mono", monospace;
+	letter-spacing: 0.04em;
+}
+
+#chat .msg.bee-talk .time {
+	grid-column: 3;
+	grid-row: 1;
+	width: auto;
+	padding: 0;
+}
+
+#chat .msg.bee-talk .content {
+	grid-column: 2 / -1;
+	grid-row: 2;
+	padding: 0;
+	border-left: 0;
+}
+
+/* later lines of a group: no avatar, no nick; text on the first row */
+#chat .msg.bee-cont .from {
+	grid-column: 1;
+	width: 0;
+	overflow: hidden;
+}
+#chat .msg.bee-cont .content { grid-row: 1; }
+
+/* time in the gutter, shown on hover (every line except a group's first) */
+#chat .msg.bee-cont .time,
+#chat .messages > .msg:not(.bee-talk):not([data-type="condensed"]) > .time,
+#chat .messages > .msg[data-type="condensed"] > .condensed-summary > .time,
+#chat .messages > .msg[data-type="condensed"] > .msg > .time {
+	position: absolute;
+	left: 0;
+	top: 3px;
+	width: 52px;
+	padding: 0;
+	text-align: center;
+	visibility: hidden;
+}
+
+#chat .msg.bee-cont:hover .time,
+#chat .messages > .msg:not(.bee-talk):not([data-type="condensed"]):hover > .time,
+#chat .messages > .msg[data-type="condensed"] > .msg:hover > .time { visibility: visible; }
+
+/* system lines (joins, topics, notices...) start at the same 52px as message text */
+#chat .messages > .msg:not(.bee-talk):not([data-type="condensed"]),
+#chat .messages > .msg[data-type="condensed"] > .condensed-summary,
+#chat .messages > .msg[data-type="condensed"] > .msg {
+	position: relative;
+	padding-left: 52px;
+	padding-right: 14px;
+}
+
+#chat .messages > .msg:not(.bee-talk):not([data-type="condensed"]) > .from,
+#chat .messages > .msg[data-type="condensed"] > .condensed-summary > .from,
+#chat .messages > .msg[data-type="condensed"] > .msg > .from {
+	width: auto;
+	min-width: 0;
+	padding: 3px 8px 3px 0;
+	text-align: left;
+	mask-image: none;
+}
+
+#chat .messages > .msg:not(.bee-talk) .content { border-left: 0; }
+
+/* ---------- Hive Talk: welcome card for new visitors ---------- */
+#chat .bee-welcome {
+	margin: auto 14px 10px;
+	padding: 12px 14px;
+	display: grid;
+	gap: 4px;
+	background: var(--bee-panel);
+	border: 1px solid var(--bee-line);
+}
+#chat .bee-welcome + .messages { margin-top: 0; }
+
+#chat .bee-welcome-title {
+	color: var(--bee-text);
+	font: 600 14px "Space Grotesk", Inter, sans-serif;
+}
+
+#chat .bee-welcome-text {
+	color: var(--bee-muted);
+	font-size: 13px;
+}
+
+#chat .bee-welcome-hint {
+	color: var(--bee-dim);
+	font-size: 12px;
+}
+
+/* ---------- Hive Talk: people list grouped by rank, hex avatars ---------- */
+#chat .userlist .user-mode { margin-bottom: 6px; }
+#chat .userlist .user-mode::before { padding: 8px 16px 4px; }
+#chat .userlist .user-mode.owner::before { content: "Owners \00B7  " attr(data-count); }
+#chat .userlist .user-mode.admin::before { content: "Admins \00B7  " attr(data-count); }
+#chat .userlist .user-mode.op::before { content: "Operators \00B7  " attr(data-count); }
+#chat .userlist .user-mode.half-op::before { content: "Half-ops \00B7  " attr(data-count); }
+#chat .userlist .user-mode.voice::before { content: "Voice \00B7  " attr(data-count); }
+#chat .userlist .user-mode.normal::before { content: "People \00B7  " attr(data-count); }
+
+#chat .userlist .names .user {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 3px 16px;
+}
+
+#chat .userlist .names .user .bee-hex {
+	width: 20px;
+	height: 22px;
+	font-size: 10px;
+}
+
+/* keyboard-picked person: yellow left bar, straight corners */
+#chat .userlist .user.active { box-shadow: inset 3px 0 0 var(--bee-yellow); }

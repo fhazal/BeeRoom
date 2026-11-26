@@ -7,6 +7,9 @@
 				self: message.self,
 				highlight: message.highlight || focused,
 				'previous-source': isPreviousSource,
+				'bee-talk': !!beeGroup,
+				'bee-first': beeGroup === 'first',
+				'bee-cont': beeGroup === 'cont',
 			},
 		]"
 		:data-type="message.type"
@@ -25,6 +28,45 @@
 				<span v-for="(param, id) in message.params" :key="id">{{
 					`&#32;${param}&#32;`
 				}}</span>
+			</span>
+		</template>
+		<template v-else-if="beeGroup && message.from">
+			<!-- Hive Talk (Bee themes): hex avatar, nick and rank once per group -->
+			<template v-if="beeGroup === 'first'">
+				<span class="bee-hex" aria-hidden="true" :style="{background: beeHex}">{{
+					beeLetter
+				}}</span>
+				<span class="from">
+					<span class="only-copy" aria-hidden="true">{{
+						message.type === "action" ? "*\u00a0" : "\u003c"
+					}}</span>
+					<Username :user="message.from" :network="network" :channel="channel">{{
+						message.from.nick
+					}}</Username>
+					<span v-if="message.type !== 'action'" class="only-copy" aria-hidden="true"
+						>&gt;&nbsp;</span
+					>
+					<span v-if="beeRankTag" class="bee-rank">{{ beeRankTag }}</span>
+				</span>
+			</template>
+			<span v-else class="from">
+				<span class="only-copy" aria-hidden="true">{{
+					message.type === "action"
+						? "*\u00a0" + message.from.nick + "\u00a0"
+						: "\u003c" + message.from.nick + "\u003e\u00a0"
+				}}</span>
+			</span>
+			<span class="content" dir="auto">
+				<!-- actions: the nick is already in the group header, so only the text -->
+				<StatusmsgMarker :group="message.statusmsgGroup" />
+				<ParsedMessage :network="network" :message="message" />
+				<LinkPreview
+					v-for="preview in message.previews"
+					:key="preview.link"
+					:keep-scroll-position="keepScrollPosition"
+					:link="preview"
+					:channel="channel"
+				/>
 			</span>
 		</template>
 		<template v-else-if="isAction()">
@@ -107,6 +149,7 @@ import StatusmsgMarker from "./StatusmsgMarker.vue";
 
 import type {ClientChan, ClientMessage, ClientNetwork} from "../js/types";
 import {useStore} from "../js/store";
+import {beeHexBackground, beeInitial, beeRank} from "../js/helpers/beeTheme";
 
 MessageTypes.ParsedMessage = ParsedMessage;
 MessageTypes.LinkPreview = LinkPreview;
@@ -124,6 +167,7 @@ export default defineComponent({
 		network: {type: Object as PropType<ClientNetwork>, required: true},
 		keepScrollPosition: Function as PropType<() => void>,
 		isPreviousSource: Boolean,
+		beeGroup: {type: String, default: ""},
 		focused: Boolean,
 	},
 	setup(props) {
@@ -161,7 +205,16 @@ export default defineComponent({
 			return typeof MessageTypes["message-" + props.message.type] !== "undefined";
 		};
 
+		const beeHex = computed(() =>
+			beeHexBackground(props.message.from?.nick || "", store.state.settings.coloredNicks)
+		);
+		const beeLetter = computed(() => beeInitial(props.message.from?.nick || "?"));
+		const beeRankTag = computed(() => beeRank(props.message.from?.mode));
+
 		return {
+			beeHex,
+			beeLetter,
+			beeRankTag,
 			timeFormat,
 			messageTime,
 			messageTimeLocale,
