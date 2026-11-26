@@ -66,7 +66,7 @@
 	--link-color: var(--bee-honey-text);
 	--window-bg-color: var(--bee-bg);
 	--window-heading-color: var(--bee-text);
-	--date-marker-color: var(--bee-line);
+	--date-marker-color: var(--bee-dim);
 	--unread-marker-color: var(--bee-yellow);
 	--highlight-bg-color: var(--bee-tint);
 	--highlight-border-color: var(--bee-yellow);
