@@ -11,8 +11,8 @@ const ctcpResponses = {
 			.filter((key) => key !== "CLIENTINFO" && typeof ctcpResponses[key] === "function")
 			.join(" "),
 	PING: ({message}: {message: string}) => message.substring(5),
-	SOURCE: () => pkg.repository.url,
-	VERSION: () => pkg.name + " -- " + pkg.homepage,
+	SOURCE: () => "https://github.com/fhazal/BeeRoom",
+	VERSION: () => "BeeRoom " + pkg.beeroom + " -- https://github.com/fhazal/BeeRoom",
 };
 
 export default <IrcEventHandler>function (irc, network) {

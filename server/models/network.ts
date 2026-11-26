@@ -375,7 +375,7 @@ class Network {
 
 		const webircObject = {
 			password: Config.values.webirc[this.host],
-			username: "thelounge",
+			username: "beeroom",
 			address: client.config.browser?.ip,
 			hostname: client.config.browser?.hostname,
 			options: {},

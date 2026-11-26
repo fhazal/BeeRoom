@@ -272,7 +272,7 @@ module.exports = {
 		nick: "guest%%%%",
 		username: "beeroom",
 		realname: "",
-		join: "",
+		join: "#lobby",
 		leaveMessage: "",
 	},
 

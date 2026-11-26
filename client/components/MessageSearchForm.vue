@@ -57,7 +57,7 @@ form.message-search input::placeholder {
 
 form.message-search .input-wrapper {
 	position: absolute;
-	top: 45px;
+	top: 52px;
 	left: 0;
 	right: 0;
 	z-index: 1;

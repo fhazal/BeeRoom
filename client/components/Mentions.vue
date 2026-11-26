@@ -139,7 +139,7 @@
 		right: 0;
 		left: 0;
 		bottom: 0;
-		top: 45px; /* header height */
+		top: 52px; /* header height */
 	}
 }
 </style>

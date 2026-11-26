@@ -220,7 +220,7 @@
 					@input="onNickChanged"
 				/>
 			</div>
-			<template v-if="!config?.useHexIp">
+			<template v-if="!config?.useHexIp && !isLockedGuest">
 				<div class="connect-row">
 					<label for="connect:username">Username</label>
 					<input
@@ -233,7 +233,7 @@
 					/>
 				</div>
 			</template>
-			<div class="connect-row">
+			<div v-if="!isLockedGuest" class="connect-row">
 				<label for="connect:realname">Real name</label>
 				<input
 					id="connect:realname"
@@ -243,7 +243,7 @@
 					maxlength="300"
 				/>
 			</div>
-			<div class="connect-row">
+			<div v-if="!isLockedGuest" class="connect-row">
 				<label for="connect:leaveMessage">Leave message</label>
 				<input
 					id="connect:leaveMessage"
@@ -440,7 +440,7 @@ the server tab on new connection"
 <script lang="ts">
 import RevealPassword from "./RevealPassword.vue";
 import SidebarToggle from "./SidebarToggle.vue";
-import {defineComponent, nextTick, PropType, ref, watch} from "vue";
+import {computed, defineComponent, nextTick, PropType, ref, watch} from "vue";
 import {useStore} from "../js/store";
 import {ClientNetwork} from "../js/types";
 
@@ -468,6 +468,9 @@ export default defineComponent({
 	setup(props) {
 		const store = useStore();
 		const config = ref(store.state.serverConfiguration);
+		const isLockedGuest = computed(
+			() => !!config.value?.lockNetwork && !!config.value?.public
+		);
 		const previousUsername = ref(props.defaults?.username);
 		const displayPasswordField = ref(false);
 
@@ -558,6 +561,7 @@ export default defineComponent({
 		return {
 			store,
 			config,
+			isLockedGuest,
 			displayPasswordField,
 			publicPassword,
 			commandsInput,

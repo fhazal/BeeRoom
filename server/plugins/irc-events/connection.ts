@@ -84,7 +84,7 @@ export default <IrcEventHandler>function (irc, network) {
 		network.getLobby().pushMessage(
 			client,
 			new Msg({
-				text: "Disconnected from the network, and will not reconnect. Use /connect to reconnect again.",
+				text: "You were disconnected from the server. Type /connect to join again.",
 			}),
 			true
 		);

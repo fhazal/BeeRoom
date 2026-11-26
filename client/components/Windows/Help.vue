@@ -580,7 +580,7 @@
 				</div>
 				<div class="description">
 					<p>
-						Send an action message to the current channel. The Lounge will display it
+						Send an action message to the current channel. BeeRoom will display it
 						inline, as if the message was posted in the third person.
 					</p>
 				</div>

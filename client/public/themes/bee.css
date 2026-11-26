@@ -31,7 +31,7 @@
 	--bee-line: #292a2e;
 	--bee-text: #f2f1eb;
 	--bee-muted: #999a9f;
-	--bee-dim: #6c6d73;
+	--bee-dim: #8a8b91;
 	--bee-yellow: #f2c94c;
 	--bee-tint: #f2c94c16;
 	--bee-green: #8fd19a;
@@ -334,7 +334,7 @@ a,
 .user.color-1,
 .user.color-9,
 .user.color-17,
-.user.color-25 { color: #f2c94c; }
+.user.color-25 { color: #ffb347; }
 
 .user.color-2,
 .user.color-10,
@@ -427,13 +427,22 @@ a,
 }
 
 #form #nick {
-	background: var(--bee-panel2);
+	display: flex !important;
+	align-items: center !important;
+	height: auto;
+	padding: 0 10px;
+	margin: 0;
+	background: var(--bee-panel);
 	color: var(--bee-muted);
 	border: 1px solid var(--bee-line);
 	border-right: 0;
 	border-radius: 0;
 	font: 12px "JetBrains Mono", monospace;
+	line-height: 1;
 }
+
+#form #nick span,
+#form #nick #nick-value { line-height: 1; }
 
 #form #input {
 	background: var(--bee-panel);
@@ -451,6 +460,35 @@ a,
 	width: 46px;
 	height: 46px;
 	border-radius: 0;
+}
+
+/* ---------- Popups: context menu, autocomplete, mentions ---------- */
+.mentions-popup,
+#context-menu,
+.textcomplete-menu {
+	background-color: var(--bee-panel2);
+	border: 1px solid var(--bee-line);
+	border-radius: 0;
+	box-shadow: 0 6px 18px #0009;
+	color: var(--bee-text);
+}
+
+.context-menu-divider { background-color: var(--bee-line); }
+
+.context-menu-item,
+.textcomplete-item,
+.textcomplete-item a {
+	color: var(--bee-text);
+	border-radius: 0;
+}
+
+.context-menu-item.active,
+.context-menu-item:hover,
+.textcomplete-item:focus,
+.textcomplete-item:hover,
+.textcomplete-menu .active {
+	background-color: var(--bee-tint);
+	color: var(--bee-yellow);
 }
 
 /* ---------- Windows (connect, settings, help) ---------- */
@@ -474,6 +512,19 @@ a,
 	border-radius: 0;
 	color: var(--bee-text);
 }
+
+/* Honey focus/hover instead of the base green */
+.input:not(:disabled):hover,
+.input:not(:disabled):focus,
+.window input:not(:disabled):hover,
+.window input:not(:disabled):focus { border-color: var(--bee-yellow); }
+
+/* Wordmark on loading and sign-in screens: show the light logo on black */
+#loading .logo,
+.window .logo { display: none; }
+
+#loading .logo-inverted,
+.window .logo-inverted { display: inline-block; }
 
 .btn {
 	border: 1px solid var(--bee-yellow);
@@ -566,28 +617,7 @@ code,
 }
 #sidebar .channel-list-item.active::before { color: var(--bee-yellow); }
 #form { align-items: stretch; }
-
-#form #nick {
-	display: flex;
-	align-items: center;
-	padding: 0 10px;
-	margin: 0;
-}
 #form #submit { margin-left: 8px; }
-
-#form #nick {
-	display: flex !important;
-	align-items: center !important;
-	height: auto;
-	line-height: 1;
-	background: var(--bee-panel);
-	border: 1px solid var(--bee-line);
-	border-right: 0;
-}
-
-#form #nick span,
-#form #nick #nick-value { line-height: 1; }
-#form #input { border-left: 1px solid var(--bee-line); }
 
 #chat .msg:not([data-type="message"]):not([data-type="action"]):not([data-type="notice"]) .content {
 	font-size: 12px;

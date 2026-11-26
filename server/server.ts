@@ -13,6 +13,7 @@ import Client from "./client";
 import ClientManager from "./clientManager";
 import Uploader from "./plugins/uploader";
 import Helper from "./helper";
+import pkg from "../package.json";
 import Config from "./config";
 import Identification from "./identification";
 import changelog from "./plugins/changelog";
@@ -67,7 +68,7 @@ export default async function (
 		dev: false,
 	}
 ) {
-	log.info(`The Lounge ${colors.green(Helper.getVersion())} \
+	log.info(`BeeRoom ${colors.green("v" + pkg.beeroom)} \
 (Node.js ${colors.green(process.versions.node)} on ${colors.green(process.platform)} ${
 		process.arch
 	})`);

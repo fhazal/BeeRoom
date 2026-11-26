@@ -15,7 +15,7 @@
 .settings-menu {
 	position: fixed;
 	/* top: Header + (padding bottom of h2 - border) */
-	top: calc(45px + 5px);
+	top: calc(52px + 5px);
 	/* Mid page minus width of container and 30 pixels for padding */
 	margin-left: calc(50% - 480px - 30px);
 }

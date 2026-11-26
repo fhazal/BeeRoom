@@ -66,7 +66,7 @@ describe("Identification", function () {
 				}
 			);
 
-			expect(reply).to.equal("12345, 6697 : USERID : TheLounge : alice\r\n");
+			expect(reply).to.equal("12345, 6697 : USERID : BeeRoom : alice\r\n");
 		});
 
 		it("matches when both ends use identical representations", function () {
@@ -80,7 +80,7 @@ describe("Identification", function () {
 				}
 			);
 
-			expect(reply).to.equal("12345, 6697 : USERID : TheLounge : alice\r\n");
+			expect(reply).to.equal("12345, 6697 : USERID : BeeRoom : alice\r\n");
 		});
 
 		it("does not respond for a different remote address (anti-enumeration)", function () {
